@@ -7,10 +7,21 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.model.response.RepoAnalysisResp
 import br.edu.ifpr.commitexplorer.CommitExplorer.util.PMDExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.EmptyTreeIterator;
+import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.ZoneId;
 import java.util.*;
@@ -33,10 +44,25 @@ public class GitAnalyzerService {
                     .setDirectory(tempDir)
                     .call();
 
+            Repository repo = git.getRepository();
             Iterable<RevCommit> commits = git.log().call();
             List<String> commitHashes = new ArrayList<>();
 
+            RevWalk revWalk = new RevWalk(repo);
+            DiffFormatter diffFormatter = new DiffFormatter(DisabledOutputStream.INSTANCE);
+            diffFormatter.setRepository(repo);
+            diffFormatter.setDiffComparator(RawTextComparator.DEFAULT);
+            diffFormatter.setDetectRenames(true);
+
             for (RevCommit commit : commits) {
+                RevCommit parent = commit.getParentCount() > 0
+                        ? revWalk.parseCommit(commit.getParent(0).getId())
+                        : null;
+
+                List<DiffEntry> diffs = parent != null
+                        ? diffFormatter.scan(parent.getTree(), commit.getTree())
+                        : diffFormatter.scan(new EmptyTreeIterator(), new CanonicalTreeParser(null, repo.newObjectReader(), commit.getTree()));
+
                 String hash = commit.getName();
                 String author = commit.getAuthorIdent().getName();
                 String message = commit.getShortMessage();
@@ -52,30 +78,39 @@ public class GitAnalyzerService {
                         hash
                 ));
 
-                String filePath = "Exemplo.java";
-                String content = """
-                        public class Exemplo {
-                            public Exemplo() {}
-                        }
-                        """;
+                for (DiffEntry diff : diffs) {
+                    if (diff.getChangeType() == DiffEntry.ChangeType.DELETE) continue;
+                    if (!diff.getNewPath().endsWith(".java")) continue;
 
-                var report = PMDExecutor.analyzeFile(filePath, content);
+                    try {
+                        ObjectId objectId = diff.getNewId().toObjectId();
+                        ObjectLoader loader = repo.open(objectId);
+                        String content = new String(loader.getBytes(), StandardCharsets.UTF_8);
 
-                var violations = report.getViolations();
-                List<String> descriptions = violations.stream()
-                        .map(v -> v.getRule().getName() + ": " + v.getDescription())
-                        .toList();
+                        var report = PMDExecutor.analyzeFile(diff.getNewPath(), content);
 
-                totalIssues += descriptions.size();
+                        var violations = report.getViolations();
+                        List<String> descriptions = violations.stream()
+                                .map(v -> v.getRule().getName() + ": " + v.getDescription())
+                                .toList();
 
-                analysisResults.add(new AnalysisInfo(
-                        message,
-                        descriptions.size(),
-                        descriptions,
-                        "High",
-                        1.0 - (descriptions.size() / 10.0)
-                ));
+                        totalIssues += descriptions.size();
+
+                        analysisResults.add(new AnalysisInfo(
+                                diff.getNewPath(),
+                                descriptions.size(),
+                                descriptions,
+                                "High", // Pode customizar severidade se tiver lógica
+                                1.0 - (descriptions.size() / 10.0)
+                        ));
+                    } catch (Exception e) {
+                        log.warn("Erro ao analisar arquivo {} no commit {}", diff.getNewPath(), hash, e);
+                    }
+                }
             }
+
+            revWalk.close();
+            diffFormatter.close();
 
             return new RepoAnalysisResponse(
                     request.getBranch(),

@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.util;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.lang.Language;
@@ -16,6 +17,7 @@ import net.sourceforge.pmd.reporting.Report;
 import java.nio.file.Path;
 import java.util.List;
 
+@Slf4j
 public class PMDExecutor {
 
     private static final String CACHE_PATH = "tmp/pmd-analysis-cache.ser";
@@ -40,6 +42,7 @@ public class PMDExecutor {
 
     public static Report analyzeFile(String filePath, String fileContent) {
         PMDConfiguration config = createConfigWithCache();
+        log.atInfo().log("Analyzing file: {}", filePath);
 
         try (PmdAnalysis pmd = PmdAnalysis.create(config)) {
             LanguageVersion version = resolveVersion(config, filePath);
