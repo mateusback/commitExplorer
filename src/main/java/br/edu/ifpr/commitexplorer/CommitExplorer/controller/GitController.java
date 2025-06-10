@@ -38,6 +38,12 @@ public class GitController extends BaseController {
     })
     @PostMapping("/analyze")
     public ResponseEntity<RepoAnalysisResponse> analyzeRepository(@RequestBody RepoAnalysisRequest request) {
+
+        if(request.getEndDate() == null || request.getStartDate() == null) {
+            request.setEndDate(java.time.LocalDate.now());
+            request.setStartDate(request.getEndDate().minusMonths(1));
+        }
+
         RepoAnalysisResponse response = gitAnalyzerService.analyzeRepository(request);
         return ResponseEntity.ok(response);
     }

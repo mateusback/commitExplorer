@@ -4,8 +4,10 @@ import java.time.LocalDate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class RepoAnalysisRequest {
 
     @Schema(description = "Token de acesso ao repositório (se necessário)", example = "ghp_ABC123...", nullable = true)
