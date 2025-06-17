@@ -12,12 +12,14 @@ public class AnalisarRepositorioCommand implements Command<AnalisarRepositorioVi
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final String accessToken;
+    private final String projectUrl;
 
-    public AnalisarRepositorioCommand(List<RepositorioAlvo> repositorios, LocalDate startDate, LocalDate endDate, String accessToken) {
+    public AnalisarRepositorioCommand(List<RepositorioAlvo> repositorios, LocalDate startDate, LocalDate endDate, String accessToken, String projectUrl) {
         this.repositorios = repositorios;
         this.startDate = startDate;
         this.endDate = endDate;
         this.accessToken = accessToken;
+        this.projectUrl = projectUrl;
     }
 
 }

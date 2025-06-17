@@ -20,7 +20,8 @@ public class AnalisarRepositorioRequestMapper {
                 repositorios,
                 request.getStartDate(),
                 request.getEndDate(),
-                request.getAccessToken()
+                request.getAccessToken(),
+                request.getProjectUrl()
         );
     }
 }
