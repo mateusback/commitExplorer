@@ -1,10 +1,13 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
+@Data
+@Table(name = "arquivo_alterado")
 public class ArquivoAlteradoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

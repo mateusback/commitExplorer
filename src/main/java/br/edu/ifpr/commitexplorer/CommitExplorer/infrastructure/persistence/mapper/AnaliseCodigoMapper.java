@@ -8,7 +8,7 @@ import org.mapstruct.*;
 public interface AnaliseCodigoMapper {
 
     @Mappings({
-            @Mapping(source = "idAnaliseCodigo", target = "id"),
+            @Mapping(source = "idAnaliseCodigo", target = "idAnaliseCodigo"),
             @Mapping(source = "arquivoAlterado.idArquivoAlterado", target = "idArquivoAlterado")
     })
     AnaliseCodigo toDomain(AnaliseCodigoEntity entity);

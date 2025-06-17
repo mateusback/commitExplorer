@@ -15,4 +15,5 @@ public class AnaliseProjeto {
     private Integer statusAnalise;
     private Double tempoAnalise;
     private Branch branch;
+    private SolicitacaoAnalise solicitacaoAnalise;
 }

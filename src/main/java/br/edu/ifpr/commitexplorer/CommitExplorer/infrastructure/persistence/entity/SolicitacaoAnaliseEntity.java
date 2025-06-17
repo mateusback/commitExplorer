@@ -1,10 +1,13 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.util.Date;
 
 @Entity
-@Table(name = "solicitacoes_analise")
+@Data
+@Table(name = "solicitacao_analise")
 public class SolicitacaoAnaliseEntity {
 
     @Id
@@ -16,16 +19,4 @@ public class SolicitacaoAnaliseEntity {
 
     @OneToOne(mappedBy = "solicitacaoAnalise")
     private AnaliseProjetoEntity analiseProjeto;
-
-    public Long getIdSolicitacaoAnalise() {
-        return idSolicitacaoAnalise;
-    }
-
-    public Date getDataSolicitacao() {
-        return dataSolicitacao;
-    }
-
-    public AnaliseProjetoEntity getAnaliseProjeto() {
-        return analiseProjeto;
-    }
 }
