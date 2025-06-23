@@ -1,12 +1,17 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.StatusSolicitacao;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "solicitacao_analise")
 public class SolicitacaoAnaliseEntity {
 
@@ -14,9 +19,20 @@ public class SolicitacaoAnaliseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSolicitacaoAnalise;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataSolicitacao = new Date();
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
+    private LocalDateTime dataInicioAnalise;
+    private LocalDateTime dataFimAnalise;
 
-    @OneToOne(mappedBy = "solicitacaoAnalise")
-    private AnaliseProjetoEntity analiseProjeto;
+    private String repositorioUrl;
+    private String branch;
+    private String projetoUrl;
+    private String token;
+
+    private LocalDateTime dataSolicitacao = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    private StatusSolicitacao status;
+
+    private String mensagemErro;
 }

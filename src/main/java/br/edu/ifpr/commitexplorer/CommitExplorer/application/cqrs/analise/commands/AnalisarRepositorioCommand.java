@@ -2,10 +2,12 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.comma
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AnalisarRepositorioView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.Command;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Getter
 public class AnalisarRepositorioCommand implements Command<AnalisarRepositorioView> {
 
     private final List<RepositorioAlvo> repositorios;

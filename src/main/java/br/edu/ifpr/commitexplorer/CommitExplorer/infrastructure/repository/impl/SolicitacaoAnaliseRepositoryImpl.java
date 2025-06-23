@@ -7,7 +7,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.SolicitacaoAnaliseJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -32,9 +32,9 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
     }
 
     @Override
-    public boolean existsInDateRange(LocalDate start, LocalDate end) {
-        Date startDate = Date.from(start.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date endDate = Date.from(end.atTime(23, 59).atZone(ZoneId.systemDefault()).toInstant());
-        return jpaRepository.existsByDataSolicitacaoBetween(startDate, endDate);
+    public boolean existsRecentByRepositorioUrlAndBranch(String repositorioUrl, String branch, LocalDateTime threshold) {
+        return jpaRepository.existsByRepositorioUrlAndBranchAndDataSolicitacaoAfter(
+                repositorioUrl, branch, threshold
+        );
     }
 }

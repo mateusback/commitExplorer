@@ -9,7 +9,6 @@ public class ArquivoAlterado {
     private Integer qtdLinhasAdicionadas;
     private Integer qtdLinhasRemovidas;
     private String nomeArquivo;
-
     private Commit commit;
     private List<AnaliseCodigo> analisesCodigo;
 }

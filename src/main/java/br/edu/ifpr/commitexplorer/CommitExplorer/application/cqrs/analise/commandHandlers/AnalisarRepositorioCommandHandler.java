@@ -4,37 +4,71 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.comman
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AnalisarRepositorioView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.interfaces.CodeAnalyzerService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.CommandHandler;
+import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.security.EncryptionService;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.SolicitacaoAnalise;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.SolicitacaoAnaliseRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitRepositoryCloner;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@Slf4j
 @Component
 public class AnalisarRepositorioCommandHandler implements CommandHandler<AnalisarRepositorioCommand, AnalisarRepositorioView> {
 
     private final CodeAnalyzerService codeAnalyzer;
     private final GitRepositoryCloner cloner;
+    private final EncryptionService encryptionService;
     private final SolicitacaoAnaliseRepository solicitacaoAnaliseRepository;
 
     public AnalisarRepositorioCommandHandler(
             CodeAnalyzerService gitAnalyzerService,
             GitRepositoryCloner cloner,
+            EncryptionService encryptionService,
             SolicitacaoAnaliseRepository solicitacaoAnaliseRepository
     ) {
         this.codeAnalyzer = gitAnalyzerService;
+        this.encryptionService = encryptionService;
         this.cloner = cloner;
         this.solicitacaoAnaliseRepository = solicitacaoAnaliseRepository;
     }
 
     @Override
-    public AnalisarRepositorioView handle(AnalisarRepositorioCommand command){
+    public AnalisarRepositorioView handle(AnalisarRepositorioCommand command) {
+        var repositoriosParaAnalisar = 0;
+        log.info("Nova solicitação de análise de repositórios recebida");
 
-        LocalDate start = LocalDate.of(1990, 1, 20);
-        LocalDate end = LocalDate.now();
+        for (var repositorio : command.getRepositorios()) {
+            var analiseJaRealizada = solicitacaoAnaliseRepository.existsRecentByRepositorioUrlAndBranch(
+                    repositorio.getRepoUrl(),
+                    repositorio.getBranch(),
+                    LocalDateTime.now().minusHours(4)
+            );
 
-        var exists = solicitacaoAnaliseRepository.existsInDateRange(start, end);
+            if (analiseJaRealizada)
+                continue;
 
+            repositoriosParaAnalisar++;
+
+            var encryptedToken = encryptionService.encrypt(command.getAccessToken());
+            var dataInicio = command.getStartDate() != null ? command.getStartDate() : LocalDate.now().minusMonths(3);
+            var dataFim = command.getEndDate() != null ? command.getEndDate() : LocalDate.now();
+            var solicitacao = new SolicitacaoAnalise();
+            solicitacao.registrarNovaSolicitacao(
+                    repositorio.getRepoUrl(),
+                    repositorio.getBranch(),
+                    command.getProjectUrl(),
+                    encryptedToken,
+                    dataInicio,
+                    dataFim
+            );
+
+            solicitacaoAnaliseRepository.save(solicitacao);
+        }
+
+        log.info("Total de repositórios para análise: {}", repositoriosParaAnalisar);
         return new AnalisarRepositorioView();
     }
 }
