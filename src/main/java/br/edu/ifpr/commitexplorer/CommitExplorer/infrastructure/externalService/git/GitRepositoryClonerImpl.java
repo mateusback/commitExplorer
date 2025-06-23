@@ -1,4 +1,4 @@
-package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.externalService;
+package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.externalService.git;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitRepositoryCloner;
 import org.eclipse.jgit.api.Git;

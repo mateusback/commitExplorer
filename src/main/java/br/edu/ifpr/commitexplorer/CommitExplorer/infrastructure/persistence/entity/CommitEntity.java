@@ -1,13 +1,15 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "commit")
 public class CommitEntity {
     @Id
@@ -21,13 +23,13 @@ public class CommitEntity {
     private Integer complexidadeGeral;
 
     @ManyToOne
-    @JoinColumn(name = "idBranch")
+    @JoinColumn(name = "id_branch")
     private BranchEntity branch;
 
     @ManyToOne
-    @JoinColumn(name = "idAutor")
+    @JoinColumn(name = "id_autor")
     private AutorEntity autor;
 
-    @OneToMany(mappedBy = "commit")
+    @OneToMany(mappedBy = "commit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArquivoAlteradoEntity> arquivosAlterados;
 }

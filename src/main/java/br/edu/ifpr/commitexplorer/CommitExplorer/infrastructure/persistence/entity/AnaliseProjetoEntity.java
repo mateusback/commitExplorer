@@ -1,12 +1,14 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "analise_projeto")
 public class AnaliseProjetoEntity {
     @Id
@@ -17,8 +19,6 @@ public class AnaliseProjetoEntity {
     private Double pontuacaoTotal;
     private Integer totalAutores;
     private Integer totalCommits;
-    private LocalDateTime periodoAnalisadoInicio;
-    private LocalDateTime periodoAnalisadoFim;
     private Integer quantidadeCodeSmells;
     private Double complexidadeMedia;
     private Integer statusAnalise;

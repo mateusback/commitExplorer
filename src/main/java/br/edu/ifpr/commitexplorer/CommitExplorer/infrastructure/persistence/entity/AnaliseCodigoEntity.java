@@ -1,10 +1,13 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAnalise;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "analise_codigo")
 public class AnaliseCodigoEntity {
     @Id
@@ -15,7 +18,10 @@ public class AnaliseCodigoEntity {
     private Integer severidade;
     private Integer pontuacaoNegativa;
 
+    @Enumerated(EnumType.STRING)
+    private TipoAnalise tipo;
+
     @ManyToOne
-    @JoinColumn(name = "idArquivoAlterado")
+    @JoinColumn(name = "id_arquivo_alterado")
     private ArquivoAlteradoEntity arquivoAlterado;
 }

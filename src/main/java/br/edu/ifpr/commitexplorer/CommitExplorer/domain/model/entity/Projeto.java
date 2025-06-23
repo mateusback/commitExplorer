@@ -9,4 +9,22 @@ public class Projeto {
     private String urlRepo;
     private LocalDateTime dataCriacao;
     private List<Branch> branches;
+
+    // <editor-fold desc="Getters">
+    public Long getIdProjeto() {
+        return idProjeto;
+    }
+    public String getNome() {
+        return nome;
+    }
+    public String getUrlRepo() {
+        return urlRepo;
+    }
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+    public List<Branch> getBranches() {
+        return branches;
+    }
+    // </editor-fold>
 }

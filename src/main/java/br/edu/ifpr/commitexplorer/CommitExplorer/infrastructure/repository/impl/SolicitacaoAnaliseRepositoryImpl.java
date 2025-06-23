@@ -8,9 +8,6 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.inter
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-
 @Component
 public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepository {
 
@@ -26,9 +23,17 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
     }
 
     @Override
-    public void save(SolicitacaoAnalise solicitacaoAnalise) {
+    public SolicitacaoAnalise save(SolicitacaoAnalise solicitacaoAnalise) {
         SolicitacaoAnaliseEntity entity = mapper.toEntity(solicitacaoAnalise);
-        jpaRepository.save(entity);
+        SolicitacaoAnaliseEntity saved = jpaRepository.save(entity);
+        return mapper.toDomain(saved);
+    }
+
+    @Override
+    public SolicitacaoAnalise findById(Long idSolicitacaoAnalise) {
+        return jpaRepository.findById(idSolicitacaoAnalise)
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalArgumentException("Solicitação de análise não encontrada com ID: " + idSolicitacaoAnalise));
     }
 
     @Override

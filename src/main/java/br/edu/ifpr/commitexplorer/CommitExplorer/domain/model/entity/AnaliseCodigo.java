@@ -1,51 +1,49 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAnalise;
+
 public class AnaliseCodigo {
     private Long idAnaliseCodigo;
     private String descricaoSmell;
     private Integer severidade;
     private Integer pontuacaoNegativa;
+    private TipoAnalise tipo;
+    private ArquivoAlterado arquivoAlterado;
 
-    //TODO - AJUSTAR DEPOIS
-    private long idArquivoAlterado;
+    public void registrarAnaliseBoa(ArquivoAlterado arquivoAlterado) {
+        this.descricaoSmell = "Nenhum problema encontrado";
+        this.severidade = 0;
+        this.pontuacaoNegativa = 0;
+        this.tipo = TipoAnalise.INFO;
+        this.arquivoAlterado = arquivoAlterado;
+    }
 
+    public void registrarAnaliseRuim(String descricaoSmell, Integer severidade, Integer pontuacaoNegativa, ArquivoAlterado arquivoAlterado) {
+        this.descricaoSmell = descricaoSmell;
+        this.severidade = severidade;
+        this.pontuacaoNegativa = pontuacaoNegativa;
+        this.tipo = TipoAnalise.SMELL;
+        this.arquivoAlterado = arquivoAlterado;
+    }
+
+    // <editor-fold desc="Getters">
     public Long getIdAnaliseCodigo() {
         return idAnaliseCodigo;
     }
-
-    public void setIdAnaliseCodigo(Long idAnaliseCodigo) {
-        this.idAnaliseCodigo = idAnaliseCodigo;
-    }
-
     public String getDescricaoSmell() {
         return descricaoSmell;
     }
-
-    public void setDescricaoSmell(String descricaoSmell) {
-        this.descricaoSmell = descricaoSmell;
-    }
-
     public Integer getSeveridade() {
         return severidade;
     }
-
-    public void setSeveridade(Integer severidade) {
-        this.severidade = severidade;
-    }
-
     public Integer getPontuacaoNegativa() {
         return pontuacaoNegativa;
     }
-
-    public void setPontuacaoNegativa(Integer pontuacaoNegativa) {
-        this.pontuacaoNegativa = pontuacaoNegativa;
+    public TipoAnalise getTipo() {
+        return tipo;
     }
-
-    public long getIdArquivoAlterado() {
-        return idArquivoAlterado;
+    public ArquivoAlterado getArquivoAlterado() {
+        return arquivoAlterado;
     }
-
-    public void setIdArquivoAlterado(long idArquivoAlterado) {
-        this.idArquivoAlterado = idArquivoAlterado;
-    }
+    // </editor-fold>
 }

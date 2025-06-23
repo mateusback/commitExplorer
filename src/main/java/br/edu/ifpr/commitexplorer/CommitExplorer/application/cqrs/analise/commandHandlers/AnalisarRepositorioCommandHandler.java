@@ -1,13 +1,13 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commandHandlers;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.AnalisarRepositorioCommand;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.ProcessarSolicitacaoCommand;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AnalisarRepositorioView;
-import br.edu.ifpr.commitexplorer.CommitExplorer.application.interfaces.CodeAnalyzerService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.CommandHandler;
+import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.security.EncryptionService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.SolicitacaoAnalise;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.SolicitacaoAnaliseRepository;
-import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitRepositoryCloner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -18,20 +18,17 @@ import java.time.LocalDateTime;
 @Component
 public class AnalisarRepositorioCommandHandler implements CommandHandler<AnalisarRepositorioCommand, AnalisarRepositorioView> {
 
-    private final CodeAnalyzerService codeAnalyzer;
-    private final GitRepositoryCloner cloner;
+    private final MediatorHandler mediatorHandler;
     private final EncryptionService encryptionService;
     private final SolicitacaoAnaliseRepository solicitacaoAnaliseRepository;
 
     public AnalisarRepositorioCommandHandler(
-            CodeAnalyzerService gitAnalyzerService,
-            GitRepositoryCloner cloner,
+            MediatorHandler mediatorHandler,
             EncryptionService encryptionService,
             SolicitacaoAnaliseRepository solicitacaoAnaliseRepository
     ) {
-        this.codeAnalyzer = gitAnalyzerService;
+        this.mediatorHandler = mediatorHandler;
         this.encryptionService = encryptionService;
-        this.cloner = cloner;
         this.solicitacaoAnaliseRepository = solicitacaoAnaliseRepository;
     }
 
@@ -65,7 +62,9 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
                     dataFim
             );
 
-            solicitacaoAnaliseRepository.save(solicitacao);
+            var entity = solicitacaoAnaliseRepository.save(solicitacao);
+            var processarCommand = new ProcessarSolicitacaoCommand(entity.getIdSolicitacaoAnalise());
+            mediatorHandler.enviarComando(processarCommand);
         }
 
         log.info("Total de repositórios para análise: {}", repositoriosParaAnalisar);
