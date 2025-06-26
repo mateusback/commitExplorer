@@ -11,8 +11,4 @@ public class ProcessarSolicitacaoCommand implements Command<ProcessarSolicitacao
     public ProcessarSolicitacaoCommand(long solicitacaoId) {
         this.solicitacaoId = solicitacaoId;
     }
-
-    public long getSolicitacaoId() {
-        return solicitacaoId;
-    }
 }

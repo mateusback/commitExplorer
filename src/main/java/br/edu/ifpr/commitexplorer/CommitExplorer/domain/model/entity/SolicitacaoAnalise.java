@@ -102,4 +102,43 @@ public class SolicitacaoAnalise {
         return mensagemErro;
     }
     // </editor-fold>
+
+    // <editor-fold desc="Setters">
+    public void setIdSolicitacaoAnalise(Long idSolicitacaoAnalise) {
+        this.idSolicitacaoAnalise = idSolicitacaoAnalise;
+    }
+    public void setDataSolicitacao(LocalDateTime dataSolicitacao) {
+        this.dataSolicitacao = dataSolicitacao;
+    }
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
+    }
+    public void setDataInicioAnalise(LocalDateTime dataInicioAnalise) {
+        this.dataInicioAnalise = dataInicioAnalise;
+    }
+    public void setDataFimAnalise(LocalDateTime dataFimAnalise) {
+        this.dataFimAnalise = dataFimAnalise;
+    }
+    public void setRepositorioUrl(String repositorioUrl) {
+        this.repositorioUrl = repositorioUrl;
+    }
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+    public void setProjetoUrl(String projetoUrl) {
+        this.projetoUrl = projetoUrl;
+    }
+    public void setToken(String token) {
+        this.token = token;
+    }
+    public void setStatus(StatusSolicitacao status) {
+        this.status = status;
+    }
+    public void setMensagemErro(String mensagemErro) {
+        this.mensagemErro = mensagemErro;
+    }
+    // </editor-fold>
 }

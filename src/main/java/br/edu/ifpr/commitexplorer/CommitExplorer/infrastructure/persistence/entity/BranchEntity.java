@@ -20,8 +20,8 @@ public class BranchEntity {
     private String nome;
 
     @ManyToOne
-    @JoinColumn(name = "idProjeto")
-    private ProjetoEntity projeto;
+    @JoinColumn(name = "id_repositorio")
+    private RepositorioEntity repositorio;
 
     private LocalDateTime dataCriacao;
     private LocalDateTime dataUltimaAnalise;

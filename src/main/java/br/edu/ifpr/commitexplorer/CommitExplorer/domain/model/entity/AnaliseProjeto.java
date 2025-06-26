@@ -96,4 +96,40 @@ public class AnaliseProjeto {
         return solicitacaoAnalise;
     }
     // </editor-fold>
+
+    // <editor-fold desc="Setters">
+    public void setIdAnaliseProjeto(Long idAnaliseProjeto) {
+        this.idAnaliseProjeto = idAnaliseProjeto;
+    }
+    public void setDataAnalise(LocalDateTime dataAnalise) {
+        this.dataAnalise = dataAnalise;
+    }
+    public void setPontuacaoTotal(Double pontuacaoTotal) {
+        this.pontuacaoTotal = pontuacaoTotal;
+    }
+    public void setTotalAutores(Integer totalAutores) {
+        this.totalAutores = totalAutores;
+    }
+    public void setTotalCommits(Integer totalCommits) {
+        this.totalCommits = totalCommits;
+    }
+    public void setQuantidadeCodeSmells(Integer quantidadeCodeSmells) {
+        this.quantidadeCodeSmells = quantidadeCodeSmells;
+    }
+    public void setComplexidadeMedia(Double complexidadeMedia) {
+        this.complexidadeMedia = complexidadeMedia;
+    }
+    public void setStatusAnalise(Integer statusAnalise) {
+        this.statusAnalise = statusAnalise;
+    }
+    public void setTempoAnalise(Double tempoAnalise) {
+        this.tempoAnalise = tempoAnalise;
+    }
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+    public void setSolicitacaoAnalise(SolicitacaoAnalise solicitacaoAnalise) {
+        this.solicitacaoAnalise = solicitacaoAnalise;
+    }
+    // </editor-fold>
 }

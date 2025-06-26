@@ -41,4 +41,29 @@ class SolicitacaoAnaliseMapperTest {
         assertEquals(domain.getDataFim(), entity.getDataFim());
         assertEquals(domain.getStatus(), entity.getStatus());
     }
+
+    @Test
+    void deveMapearEntityParaDomainCorretamente() {
+        // Arrange
+        SolicitacaoAnaliseEntity entity = new SolicitacaoAnaliseEntity();
+        entity.setRepositorioUrl("https://github.com/test/repo");
+        entity.setBranch("main");
+        entity.setProjetoUrl("https://projeto.com");
+        entity.setToken("secrettoken");
+        entity.setDataInicio(LocalDate.of(2024, 1, 1));
+        entity.setDataFim(LocalDate.of(2024, 1, 31));
+        entity.setStatus(br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.StatusSolicitacao.PENDENTE);
+
+        // Act
+        SolicitacaoAnalise domain = mapper.toDomain(entity);
+
+        // Assert
+        assertEquals(entity.getRepositorioUrl(), domain.getRepositorioUrl());
+        assertEquals(entity.getBranch(), domain.getBranch());
+        assertEquals(entity.getProjetoUrl(), domain.getProjetoUrl());
+        assertEquals(entity.getToken(), domain.getToken());
+        assertEquals(entity.getDataInicio(), domain.getDataInicio());
+        assertEquals(entity.getDataFim(), domain.getDataFim());
+        assertEquals(entity.getStatus(), domain.getStatus());
+    }
 }

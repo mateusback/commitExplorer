@@ -57,6 +57,7 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
                             arquivo
                     );
                     resultado.add(analise);
+                    arquivo.adicionarAnalise(analise);
                 }
 
             } catch (Exception e) {

@@ -1,6 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Commit {
@@ -13,6 +14,13 @@ public class Commit {
     private Branch branch;
     private Autor autor;
     private List<ArquivoAlterado> arquivosAlterados;
+
+    public void adicionarInformacoes(String mensagem, String hash, LocalDateTime commitDate, Integer complexidadeGeral) {
+        this.mensagem = mensagem;
+        this.hash = hash;
+        this.commitDate = commitDate;
+        this.complexidadeGeral = complexidadeGeral;
+    }
 
     public void registrarCommit(String mensagem, String hash, LocalDateTime commitDate, List<ArquivoAlterado> arquivosAlterados) {
         this.mensagem = mensagem;
@@ -27,6 +35,13 @@ public class Commit {
 
     public void atribuirBranch(Branch branch) {
         this.branch = branch;
+    }
+
+    public void AdicionarArquivosAlterados(List<ArquivoAlterado> arquivosAlterados) {
+        if (this.arquivosAlterados == null) {
+            this.arquivosAlterados = new ArrayList<>();
+        }
+        this.arquivosAlterados.addAll(arquivosAlterados);
     }
 
     public void adicionarAnalisesCodigo(List<AnaliseCodigo> analises) {
@@ -91,6 +106,36 @@ public class Commit {
     }
     public List<ArquivoAlterado> getArquivosAlterados() {
         return arquivosAlterados;
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="Setters">
+    public void setIdCommit(Long idCommit) {
+        this.idCommit = idCommit;
+    }
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
+    public void setCommitDate(LocalDateTime commitDate) {
+        this.commitDate = commitDate;
+    }
+    public void setPontuacao(Float pontuacao) {
+        this.pontuacao = pontuacao;
+    }
+    public void setComplexidadeGeral(Integer complexidadeGeral) {
+        this.complexidadeGeral = complexidadeGeral;
+    }
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+    public void setAutor(Autor autor) {
+        this.autor = autor;
+    }
+    public void setArquivosAlterados(List<ArquivoAlterado> arquivosAlterados) {
+        this.arquivosAlterados = arquivosAlterados;
     }
     // </editor-fold>
 }

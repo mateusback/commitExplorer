@@ -21,6 +21,9 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     public String encrypt(String data) {
+        if (data == null || data.isEmpty()) {
+            return null;
+        }
         try {
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);

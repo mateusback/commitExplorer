@@ -2,6 +2,7 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAcao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArquivoAlterado {
@@ -13,7 +14,7 @@ public class ArquivoAlterado {
     private Commit commit;
     private String conteudoAntes;
     private String conteudoDepois;
-    private List<AnaliseCodigo> analisesCodigo;
+    private List<AnaliseCodigo> analisesCodigo = new ArrayList<>();
 
     public void atribuirNomeArquivo(String nomeArquivo) {
         this.nomeArquivo = nomeArquivo;
@@ -32,6 +33,10 @@ public class ArquivoAlterado {
             this.analisesCodigo = new java.util.ArrayList<>();
         }
         this.analisesCodigo.add(analise);
+    }
+
+    public void atribuirCommit(Commit commit) {
+        this.commit = commit;
     }
 
     // <editor-fold desc="Getters">
@@ -61,6 +66,36 @@ public class ArquivoAlterado {
     }
     public List<AnaliseCodigo> getAnalisesCodigo() {
         return analisesCodigo;
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="Setters">
+    public void setIdArquivoAlterado(Long idArquivoAlterado) {
+        this.idArquivoAlterado = idArquivoAlterado;
+    }
+    public void setFlgTipoAcao(TipoAcao flgTipoAcao) {
+        this.flgTipoAcao = flgTipoAcao;
+    }
+    public void setQtdLinhasAdicionadas(Integer qtdLinhasAdicionadas) {
+        this.qtdLinhasAdicionadas = qtdLinhasAdicionadas;
+    }
+    public void setQtdLinhasRemovidas(Integer qtdLinhasRemovidas) {
+        this.qtdLinhasRemovidas = qtdLinhasRemovidas;
+    }
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
+    }
+    public void setCommit(Commit commit) {
+        this.commit = commit;
+    }
+    public void setConteudoAntes(String conteudoAntes) {
+        this.conteudoAntes = conteudoAntes;
+    }
+    public void setConteudoDepois(String conteudoDepois) {
+        this.conteudoDepois = conteudoDepois;
+    }
+    public void setAnalisesCodigo(List<AnaliseCodigo> analisesCodigo) {
+        this.analisesCodigo = analisesCodigo;
     }
     // </editor-fold>
 }

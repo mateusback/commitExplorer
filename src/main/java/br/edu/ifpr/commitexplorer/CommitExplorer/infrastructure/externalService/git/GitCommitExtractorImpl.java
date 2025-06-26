@@ -5,7 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Branch;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAcao;
-import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitCommitExtractor;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.GitCommitExtractor;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;

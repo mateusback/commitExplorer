@@ -1,4 +1,4 @@
-package br.edu.ifpr.commitexplorer.CommitExplorer.domain.service;
+package br.edu.ifpr.commitexplorer.CommitExplorer.application.service;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
 

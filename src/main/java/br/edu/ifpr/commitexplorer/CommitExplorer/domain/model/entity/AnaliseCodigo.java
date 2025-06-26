@@ -46,4 +46,25 @@ public class AnaliseCodigo {
         return arquivoAlterado;
     }
     // </editor-fold>
+
+    // <editor-fold desc="Setters">
+    public void setIdAnaliseCodigo(Long idAnaliseCodigo) {
+        this.idAnaliseCodigo = idAnaliseCodigo;
+    }
+    public void setDescricaoSmell(String descricaoSmell) {
+        this.descricaoSmell = descricaoSmell;
+    }
+    public void setSeveridade(Integer severidade) {
+        this.severidade = severidade;
+    }
+    public void setPontuacaoNegativa(Integer pontuacaoNegativa) {
+        this.pontuacaoNegativa = pontuacaoNegativa;
+    }
+    public void setTipo(TipoAnalise tipo) {
+        this.tipo = tipo;
+    }
+    public void setArquivoAlterado(ArquivoAlterado arquivoAlterado) {
+        this.arquivoAlterado = arquivoAlterado;
+    }
+    // </editor-fold>
 }

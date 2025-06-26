@@ -3,6 +3,7 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.comma
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.AnalisarRepositorioCommand;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.ProcessarSolicitacaoCommand;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AnalisarRepositorioView;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.SolicitacaoAnaliseExecutor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.CommandHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.security.EncryptionService;
@@ -18,18 +19,18 @@ import java.time.LocalDateTime;
 @Component
 public class AnalisarRepositorioCommandHandler implements CommandHandler<AnalisarRepositorioCommand, AnalisarRepositorioView> {
 
-    private final MediatorHandler mediatorHandler;
     private final EncryptionService encryptionService;
     private final SolicitacaoAnaliseRepository solicitacaoAnaliseRepository;
+    private final SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor;
 
     public AnalisarRepositorioCommandHandler(
-            MediatorHandler mediatorHandler,
             EncryptionService encryptionService,
-            SolicitacaoAnaliseRepository solicitacaoAnaliseRepository
+            SolicitacaoAnaliseRepository solicitacaoAnaliseRepository,
+            SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor
     ) {
-        this.mediatorHandler = mediatorHandler;
         this.encryptionService = encryptionService;
         this.solicitacaoAnaliseRepository = solicitacaoAnaliseRepository;
+        this.solicitacaoAnaliseExecutor = solicitacaoAnaliseExecutor;
     }
 
     @Override
@@ -64,7 +65,8 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
 
             var entity = solicitacaoAnaliseRepository.save(solicitacao);
             var processarCommand = new ProcessarSolicitacaoCommand(entity.getIdSolicitacaoAnalise());
-            mediatorHandler.enviarComando(processarCommand);
+            log.info("Enviando comando para processar solicitação de análise: {}", entity.getIdSolicitacaoAnalise());
+            solicitacaoAnaliseExecutor.processar(processarCommand);
         }
 
         log.info("Total de repositórios para análise: {}", repositoriosParaAnalisar);

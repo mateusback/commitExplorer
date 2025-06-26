@@ -16,9 +16,9 @@ public class ProjetoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idProjeto;
     private String nome;
-    private String urlRepo;
     private LocalDateTime dataCriacao;
+    private String projetoUrl;
 
     @OneToMany(mappedBy = "projeto")
-    private List<BranchEntity> branches;
+    private List<RepositorioEntity> repositorios;
 }

@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.externalService.git;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.security.EncryptionService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitRepositoryCloner;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -10,6 +11,12 @@ import java.nio.file.Files;
 
 @Service
 public class GitRepositoryClonerImpl implements GitRepositoryCloner {
+
+    private final EncryptionService encryptionService;
+
+    public GitRepositoryClonerImpl(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
+    }
 
     public File clone(String repoUrl, String branch, String token) {
         try {
@@ -22,7 +29,7 @@ public class GitRepositoryClonerImpl implements GitRepositoryCloner {
 
             if (token != null && !token.isBlank()) {
                 cloneCommand.setCredentialsProvider(
-                        new UsernamePasswordCredentialsProvider("git", token)
+                        new UsernamePasswordCredentialsProvider("git", encryptionService.decrypt(token))
                 );
             }
 
