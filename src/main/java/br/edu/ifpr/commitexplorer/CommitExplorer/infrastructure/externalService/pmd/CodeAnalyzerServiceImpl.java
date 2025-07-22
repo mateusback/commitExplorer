@@ -4,21 +4,13 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.util.PMDExecutor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.ArquivoAlterado;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
-import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.response.AnalysisInfo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.CodeAnalyzerService;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

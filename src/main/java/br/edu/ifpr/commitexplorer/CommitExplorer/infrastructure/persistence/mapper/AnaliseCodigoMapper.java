@@ -1,23 +1,34 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseCodigoEntity;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.utils.ArquivoAlteradoIdMapper;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AutorEntity;
 
-@Mapper(componentModel = "spring", uses =
-        ArquivoAlteradoIdMapper.class
-)
 public interface AnaliseCodigoMapper {
-    @Named("comArquivo")
-    @Mapping(target = "arquivoAlterado", qualifiedByName = "somenteId")
-    AnaliseCodigoEntity toEntityComArquivo(AnaliseCodigo domain);
+    AnaliseCodigoEntity toEntity(AnaliseCodigo domain);
 
-    @Named("semArquivo")
-    @Mapping(target = "arquivoAlterado", ignore = true)
-    AnaliseCodigoEntity toEntitySemArquivo(AnaliseCodigo domain);
+    /**
+     * Converte um objeto de domínio {@link AnaliseCodigo} para uma instância de {@link AnaliseCodigoEntity}
+     * sem associar a lista de commits.
+     * <p>
+     * Útil para operações que não requerem commits e para evitar problemas de recursão infinita.
+     *
+     * @param domain o objeto de domínio a ser convertido
+     * @return a entidade correspondente sem associação de commits
+     */
+    AnaliseCodigoEntity toEntityId(AnaliseCodigo domain);
 
     AnaliseCodigo toDomain(AnaliseCodigoEntity entity);
+
+    /**
+     * Converte uma entidade {@link AnaliseCodigoEntity} para um objeto de domínio {@link AnaliseCodigo}
+     * sem associar a lista de commits.
+     * <p>
+     * Útil para operações que não requerem commits e para evitar problemas de recursão infinita.
+     *
+     * @param entity a entidade a ser convertida
+     * @return o objeto de domínio correspondente sem associação de commits
+     */
+    AnaliseCodigo toDomainId(AnaliseCodigoEntity entity);
 }

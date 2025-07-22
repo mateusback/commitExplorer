@@ -1,0 +1,70 @@
+﻿package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
+
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProjeto;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseProjetoEntity;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
+
+    private BranchMapper branchMapper;
+
+    public AnaliseProjetoMapperImpl(BranchMapper branchMapper) {
+        this.branchMapper = branchMapper;
+    }
+
+    @Override
+    public AnaliseProjetoEntity toEntity(AnaliseProjeto domain) {
+        var entity = baseEntity(domain);
+        if (domain.getBranch() != null) {
+            entity.setBranch(branchMapper.toEntityId(domain.getBranch()));
+        }
+        return entity;
+    }
+
+    public AnaliseProjetoEntity toEntityId(AnaliseProjeto domain) {
+        return baseEntity(domain);
+    }
+
+    @Override
+    public AnaliseProjeto toDomain(AnaliseProjetoEntity entity) {
+        var domain = baseDomain(entity);
+        if (entity.getBranch() != null) {
+            domain.setBranch(branchMapper.toDomainId(entity.getBranch()));
+        }
+        return domain;
+    }
+
+    public AnaliseProjeto toDomainId(AnaliseProjetoEntity entity) {
+        return baseDomain(entity);
+    }
+
+    private AnaliseProjetoEntity baseEntity(AnaliseProjeto domain) {
+        var entity = new AnaliseProjetoEntity();
+        entity.setIdAnaliseProjeto(domain.getIdAnaliseProjeto());
+        entity.setDataAnalise(domain.getDataAnalise());
+        entity.setStatusAnalise(domain.getStatusAnalise());
+        entity.setComplexidadeMedia(domain.getComplexidadeMedia());
+        entity.setPontuacaoTotal(domain.getPontuacaoTotal());
+        entity.setTotalCommits(domain.getTotalCommits());
+        entity.setTotalAutores(domain.getTotalAutores());
+        entity.setTempoAnalise(domain.getTempoAnalise());
+        return entity;
+    }
+
+    private AnaliseProjeto baseDomain(AnaliseProjetoEntity entity) {
+        var domain = new AnaliseProjeto();
+        domain.setIdAnaliseProjeto(entity.getIdAnaliseProjeto());
+        domain.setDataAnalise(entity.getDataAnalise());
+        domain.setStatusAnalise(entity.getStatusAnalise());
+        domain.setComplexidadeMedia(entity.getComplexidadeMedia());
+        domain.setPontuacaoTotal(entity.getPontuacaoTotal());
+        domain.setTotalCommits(entity.getTotalCommits());
+        domain.setTotalAutores(entity.getTotalAutores());
+        domain.setTempoAnalise(entity.getTempoAnalise());
+        return domain;
+    }
+
+}

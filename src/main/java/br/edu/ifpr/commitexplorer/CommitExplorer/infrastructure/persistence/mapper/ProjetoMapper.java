@@ -2,15 +2,31 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Projeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.ProjetoEntity;
-import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {
-        BranchMapper.class,
-        CommitMapper.class,
-        ArquivoAlteradoMapper.class,
-        AnaliseProjetoMapper.class
-})
 public interface ProjetoMapper {
-    Projeto toDomain(ProjetoEntity entity);
     ProjetoEntity toEntity(Projeto domain);
+
+    /**
+     * Converte um objeto de domínio {@link Projeto} para uma instância de {@link ProjetoEntity}
+     * sem associar a lista de commits.
+     * <p>
+     * Útil para operações que não requerem commits e para evitar problemas de recursão infinita.
+     *
+     * @param domain o objeto de domínio a ser convertido
+     * @return a entidade correspondente sem associação de commits
+     */
+    ProjetoEntity toEntityId(Projeto domain);
+
+    Projeto toDomain(ProjetoEntity entity);
+
+    /**
+     * Converte uma entidade {@link ProjetoEntity} para um objeto de domínio {@link Projeto}
+     * sem associar a lista de commits.
+     * <p>
+     * Útil para operações que não requerem commits e para evitar problemas de recursão infinita.
+     *
+     * @param entity a entidade a ser convertida
+     * @return o objeto de domínio correspondente sem associação de commits
+     */
+    Projeto toDomainId(ProjetoEntity entity);
 }
