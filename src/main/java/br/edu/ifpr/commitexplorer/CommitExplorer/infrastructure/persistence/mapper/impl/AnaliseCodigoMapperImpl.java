@@ -1,4 +1,4 @@
-﻿package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
+package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseCodigoEntity;

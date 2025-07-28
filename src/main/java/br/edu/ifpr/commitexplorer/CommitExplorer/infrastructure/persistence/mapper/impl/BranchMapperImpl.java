@@ -1,4 +1,4 @@
-﻿package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
+package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Branch;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.BranchEntity;
@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.CommitMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +17,7 @@ public class BranchMapperImpl implements BranchMapper {
     private final AnaliseCodigoMapper analiseCodigoMapper;
 
     public BranchMapperImpl(
-            AnaliseProjetoMapper analiseProjetoMapper,
+            @Lazy AnaliseProjetoMapper analiseProjetoMapper,
             CommitMapper commitMapper,
             AnaliseCodigoMapper analiseCodigoMapper
     ) {

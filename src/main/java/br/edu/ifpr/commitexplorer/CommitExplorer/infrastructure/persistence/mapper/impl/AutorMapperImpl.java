@@ -1,9 +1,10 @@
-﻿package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
+package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.impl;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AutorEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AutorMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.CommitMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +12,7 @@ public class AutorMapperImpl implements AutorMapper {
 
     private final CommitMapper commitMapper;
 
-    public AutorMapperImpl(CommitMapper commitMapper) {
+    public AutorMapperImpl(@Lazy CommitMapper commitMapper) {
         this.commitMapper = commitMapper;
     }
 
@@ -54,12 +55,12 @@ public class AutorMapperImpl implements AutorMapper {
         var entity = new AutorEntity();
         entity.setIdAutor(domain.getIdAutor());
         entity.setEmail(domain.getEmail());
-        entity.setName(domain.getName());
+        entity.setNome(domain.getNome());
         return entity;
     }
 
     private Autor baseDomain(AutorEntity entity) {
-        var domain = new Autor(entity.getName(), entity.getEmail());
+        var domain = new Autor(entity.getNome(), entity.getEmail());
         domain.setIdAutor(entity.getIdAutor());
         return domain;
     }

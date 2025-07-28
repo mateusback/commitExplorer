@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecutor {
@@ -145,7 +144,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     private Autor obterAutor(Commit commit) {
         Autor autor = autorRepository.buscarPorEmail(commit.getAutor().getEmail());
         if (autor == null) {
-            autor = new Autor(commit.getAutor().getName(), commit.getAutor().getEmail());
+            autor = new Autor(commit.getAutor().getNome(), commit.getAutor().getEmail());
             autor = autorRepository.save(autor);
         }
         return autor;

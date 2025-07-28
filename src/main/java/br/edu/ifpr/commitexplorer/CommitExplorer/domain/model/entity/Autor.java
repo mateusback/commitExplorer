@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Autor {
     private Long idAutor;
-    private String name;
+    private String nome;
     private String email;
     private List<Commit> commits;
 
-    public Autor(String name, String email) {
-        this.name = name;
+    public Autor(String nome, String email) {
+        this.nome = nome;
         this.email = email;
     }
 
@@ -24,8 +24,8 @@ public class Autor {
     public Long getIdAutor() {
         return idAutor;
     }
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
     public String getEmail() {
         return email;
@@ -39,8 +39,8 @@ public class Autor {
     public void setIdAutor(Long idAutor) {
         this.idAutor = idAutor;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
     public void setEmail(String email) {
         this.email = email;

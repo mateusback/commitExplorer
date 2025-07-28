@@ -15,7 +15,7 @@ public class AutorEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAutor;
 
-    private String name;
+    private String nome;
     private String email;
 
     @OneToMany(mappedBy = "autor")

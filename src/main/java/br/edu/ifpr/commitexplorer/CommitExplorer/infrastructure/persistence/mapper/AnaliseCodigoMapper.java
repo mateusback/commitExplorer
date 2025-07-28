@@ -1,9 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
-import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseCodigoEntity;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AutorEntity;
 
 public interface AnaliseCodigoMapper {
     AnaliseCodigoEntity toEntity(AnaliseCodigo domain);

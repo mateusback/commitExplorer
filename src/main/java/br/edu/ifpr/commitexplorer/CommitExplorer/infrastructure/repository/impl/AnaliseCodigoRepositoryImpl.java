@@ -27,7 +27,7 @@ public class AnaliseCodigoRepositoryImpl implements AnaliseCodigoRepository {
     @Override
     public List<AnaliseCodigo> saveAll(List<AnaliseCodigo> analises) {
         List<AnaliseCodigoEntity> entities = analises.stream()
-                .map(mapper::toEntityComArquivo)
+                .map(mapper::toEntityId)
                 .collect(Collectors.toList());
 
         List<AnaliseCodigoEntity> savedEntities = jpaRepository.saveAll(entities);
