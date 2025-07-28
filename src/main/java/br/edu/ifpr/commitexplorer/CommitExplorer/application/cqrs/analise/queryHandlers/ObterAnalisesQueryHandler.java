@@ -4,7 +4,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.querie
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterAnalisesView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseProjetoRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ObterAnalisesQueryHandler implements QueryHandler<ObterAnalisesQuery, ObterAnalisesView> {
 
     private final AnaliseProjetoRepository analiseProjetoRepository;

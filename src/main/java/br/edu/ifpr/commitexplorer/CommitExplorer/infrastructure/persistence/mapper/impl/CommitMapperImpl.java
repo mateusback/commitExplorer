@@ -4,7 +4,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.CommitEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ArquivoAlteradoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AutorMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.CommitMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,10 +14,16 @@ public class CommitMapperImpl implements CommitMapper {
 
     private final ArquivoAlteradoMapper arquivoAlteradoMapper;
     private final AutorMapper autorMapper;
+    private final BranchMapper branchMapper;
 
-    public CommitMapperImpl(ArquivoAlteradoMapper arquivoAlteradoMapper, AutorMapper autorMapper) {
+    public CommitMapperImpl(
+            ArquivoAlteradoMapper arquivoAlteradoMapper,
+            AutorMapper autorMapper,
+            @Lazy BranchMapper branchMapper)
+    {
         this.arquivoAlteradoMapper = arquivoAlteradoMapper;
         this.autorMapper = autorMapper;
+        this.branchMapper = branchMapper;
     }
 
     @Override
@@ -30,6 +38,9 @@ public class CommitMapperImpl implements CommitMapper {
         }
         if (domain.getAutor() != null) {
             entity.setAutor(autorMapper.toEntityId(domain.getAutor()));
+        }
+        if (domain.getBranch() != null) {
+            entity.setBranch(branchMapper.toEntityId(domain.getBranch()));
         }
         return entity;
     }
@@ -51,6 +62,9 @@ public class CommitMapperImpl implements CommitMapper {
         }
         if (entity.getAutor() != null) {
             domain.setAutor(autorMapper.toDomainId(entity.getAutor()));
+        }
+        if (entity.getBranch() != null) {
+            domain.setBranch(branchMapper.toDomainId(entity.getBranch()));
         }
         return domain;
     }

@@ -84,42 +84,42 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 continue;
             }
 
-            var commitNovo  = new Commit();
+            var commitNovo = new Commit();
 
             var autor = obterAutor(commitExtraido);
-            commitNovo .atribuirAutor(autor);
+            commitNovo.atribuirAutor(autor);
 
             var branch = obterBranch(commitExtraido, solicitacao);
-            commitNovo .atribuirBranch(branch);
-            commitNovo  = commitRepository.save(commitNovo );
-            branch.adicionarCommit(commitNovo );
-            autor.adicionarCommit(commitNovo );
+            commitNovo.atribuirBranch(branch);
+            commitNovo = commitRepository.save(commitNovo);
+            branch.adicionarCommit(commitNovo);
+            autor.adicionarCommit(commitNovo);
 
             if (!codeAnalyzer.isValidCommit(commitExtraido)) {
-                commitNovo .calcularPontuacaoFinal();
-                commitRepository.save(commitNovo );
+                commitNovo.calcularPontuacaoFinal();
+                commitRepository.save(commitNovo);
                 continue;
             }
 
             for (var arquivo : commitExtraido.getArquivosAlterados()) {
-                arquivo.atribuirCommit(commitNovo );
+                arquivo.atribuirCommit(commitNovo);
             }
 
             var listArquivos = arquivoAlteradoRepository.saveAll(commitExtraido.getArquivosAlterados());
-            commitNovo .AdicionarArquivosAlterados(listArquivos);
+            commitNovo.AdicionarArquivosAlterados(listArquivos);
 
-            var analises = codeAnalyzer.analyze(commitNovo );
+            var analises = codeAnalyzer.analyze(commitNovo);
             if (!analises.isEmpty()) {
                 analiseCodigoRepository.saveAll(analises);
-                commitNovo .adicionarAnalisesCodigo(analises);
+                commitNovo.adicionarAnalisesCodigo(analises);
             }
 
-            commitNovo .calcularPontuacaoFinal();
-            commitNovo .adicionarInformacoes(commitExtraido.getMensagem(),
+            commitNovo.calcularPontuacaoFinal();
+            commitNovo.adicionarInformacoes(commitExtraido.getMensagem(),
                     commitExtraido.getHash(),
                     commitExtraido.getCommitDate(),
                     commitExtraido.getComplexidadeGeral());
-            commitRepository.update(commitNovo );
+            commitRepository.update(commitNovo);
             novosCommits.add(commitNovo);
         }
         var branch = novosCommits.stream().findFirst().get().getBranch();

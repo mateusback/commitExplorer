@@ -1,7 +1,7 @@
-package br.edu.ifpr.commitexplorer.CommitExplorer.api.controller;
+package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.controller;
 
-import br.edu.ifpr.commitexplorer.CommitExplorer.api.dto.AnalisarRepositorioRequest;
-import br.edu.ifpr.commitexplorer.CommitExplorer.api.mapper.AnalisarRepositorioRequestMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.presentation.dto.AnalisarRepositorioRequest;
+import br.edu.ifpr.commitexplorer.CommitExplorer.presentation.mapper.AnalisarRepositorioRequestMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterAnalisesQuery;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AnalisarRepositorioView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterAnalisesView;

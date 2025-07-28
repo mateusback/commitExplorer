@@ -1,4 +1,4 @@
-package br.edu.ifpr.commitexplorer.CommitExplorer.api.dto;
+package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

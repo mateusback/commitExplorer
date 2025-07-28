@@ -1,6 +1,6 @@
-package br.edu.ifpr.commitexplorer.CommitExplorer.api.mapper;
+package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.mapper;
 
-import br.edu.ifpr.commitexplorer.CommitExplorer.api.dto.AnalisarRepositorioRequest;
+import br.edu.ifpr.commitexplorer.CommitExplorer.presentation.dto.AnalisarRepositorioRequest;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.AnalisarRepositorioCommand;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.RepositorioAlvo;
 
