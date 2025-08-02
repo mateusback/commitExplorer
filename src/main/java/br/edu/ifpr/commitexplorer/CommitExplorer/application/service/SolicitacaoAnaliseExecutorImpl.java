@@ -9,7 +9,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecutor {
@@ -26,6 +28,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     private final BranchRepository branchRepository;
     private final ProjetoRepository projetoRepository;
     private final RepositorioRepository repositorioRepository;
+    private final AnaliseProjetoRepository analiseProjetoRepository;
 
     public SolicitacaoAnaliseExecutorImpl(CodeAnalyzerService codeAnalyzer,
                                           SolicitacaoAnaliseRepository solicitacaoRepository,
@@ -37,7 +40,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                                           ArquivoAlteradoRepository arquivoAlteradoRepository,
                                           BranchRepository branchRepository,
                                           ProjetoRepository projetoRepository,
-                                          RepositorioRepository repositorioRepository) {
+                                          RepositorioRepository repositorioRepository, AnaliseProjetoRepository analiseProjetoRepository) {
         this.codeAnalyzer = codeAnalyzer;
         this.solicitacaoRepository = solicitacaoRepository;
         this.gitRepositoryCloner = gitRepositoryCloner;
@@ -49,6 +52,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         this.branchRepository = branchRepository;
         this.projetoRepository = projetoRepository;
         this.repositorioRepository = repositorioRepository;
+        this.analiseProjetoRepository = analiseProjetoRepository;
     }
 
     @Async
@@ -77,6 +81,11 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 solicitacao.getDataInicio(),
                 solicitacao.getDataFim());
 
+        var br = new Branch(solicitacao.getBranch());
+        br.setRepositorio(repositorioSalvo);
+        br.setDataUltimaAnalise(LocalDateTime.now());
+        var branch = branchRepository.save(br);
+
         var novosCommits = new ArrayList<Commit>();
         for (var commitExtraido : commitsExtraidos) {
 
@@ -89,43 +98,46 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
             var autor = obterAutor(commitExtraido);
             commitNovo.atribuirAutor(autor);
 
-            var branch = obterBranch(commitExtraido, solicitacao);
             commitNovo.atribuirBranch(branch);
             commitNovo = commitRepository.save(commitNovo);
             branch.adicionarCommit(commitNovo);
             autor.adicionarCommit(commitNovo);
-
-            if (!codeAnalyzer.isValidCommit(commitExtraido)) {
-                commitNovo.calcularPontuacaoFinal();
-                commitRepository.save(commitNovo);
-                continue;
-            }
-
-            for (var arquivo : commitExtraido.getArquivosAlterados()) {
-                arquivo.atribuirCommit(commitNovo);
-            }
-
-            var listArquivos = arquivoAlteradoRepository.saveAll(commitExtraido.getArquivosAlterados());
-            commitNovo.AdicionarArquivosAlterados(listArquivos);
-
-            var analises = codeAnalyzer.analyze(commitNovo);
-            if (!analises.isEmpty()) {
-                analiseCodigoRepository.saveAll(analises);
-                commitNovo.adicionarAnalisesCodigo(analises);
-            }
+            commitNovo.setArquivosAlterados(commitExtraido.getArquivosAlterados());
 
             commitNovo.calcularPontuacaoFinal();
             commitNovo.adicionarInformacoes(commitExtraido.getMensagem(),
                     commitExtraido.getHash(),
                     commitExtraido.getCommitDate(),
                     commitExtraido.getComplexidadeGeral());
+
+            if (!codeAnalyzer.isValidCommit(commitNovo)) {
+                commitNovo.calcularPontuacaoFinal();
+                commitRepository.save(commitNovo);
+                continue;
+            }
+
+            List<ArquivoAlterado> arquivosNovos = new ArrayList<>();
+
+            for (var arquivo : commitNovo.getArquivosAlterados()) {
+                arquivo.atribuirCommit(commitNovo);
+                arquivosNovos.add(arquivo);
+            }
+
+            var listArquivos = arquivoAlteradoRepository.saveAll(arquivosNovos);
+            commitNovo.setArquivosAlterados(listArquivos);
+
+            var analises = codeAnalyzer.analyze(commitNovo);
+            if (!analises.isEmpty()) {
+                var analisesSalvas = analiseCodigoRepository.saveAll(analises);
+                commitNovo.adicionarAnalisesCodigo(analisesSalvas);
+            }
+
             commitRepository.update(commitNovo);
             novosCommits.add(commitNovo);
         }
-        var branch = novosCommits.stream().findFirst().get().getBranch();
-
         var analiseProjeto = new AnaliseProjeto();
         analiseProjeto.consolidar(novosCommits, solicitacao);
+        analiseProjetoRepository.save(analiseProjeto);
 
         branch.adicionarAnalise(analiseProjeto);
         branchRepository.save(branch);
@@ -148,10 +160,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
             autor = autorRepository.save(autor);
         }
         return autor;
-    }
-
-    private Branch obterBranch(Commit commit, SolicitacaoAnalise solicitacao) {
-        return branchRepository.save(branchRepository.save(new Branch(commit.getBranch().getNome())));
     }
 
 }

@@ -4,6 +4,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.util.PMDExecutor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.ArquivoAlterado;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseCodigoRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.CodeAnalyzerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,13 @@ import java.util.List;
 @Slf4j
 @Service
 public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
+
+    private final AnaliseCodigoRepository analiseCodigoRepository;
+
+    public CodeAnalyzerServiceImpl(AnaliseCodigoRepository analiseCodigoRepository) {
+        this.analiseCodigoRepository = analiseCodigoRepository;
+    }
+
     @Override
     public List<AnaliseCodigo> analyze(Commit commit) {
         if (commit.getArquivosAlterados() == null || commit.getArquivosAlterados().isEmpty()) {
@@ -36,7 +44,8 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
                 if (violations.isEmpty()) {
                     AnaliseCodigo analiseOk = new AnaliseCodigo();
                     analiseOk.registrarAnaliseBoa(arquivo);
-                    resultado.add(analiseOk);
+                    var analiseOkSalva = analiseCodigoRepository.save(analiseOk);
+                    resultado.add(analiseOkSalva);
                     continue;
                 }
 
@@ -48,8 +57,9 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
                             violation.getRule().getPriority().getPriority(),
                             arquivo
                     );
-                    resultado.add(analise);
-                    arquivo.adicionarAnalise(analise);
+                    var analiseSalva = analiseCodigoRepository.save(analise);
+                    resultado.add(analiseSalva);
+                    arquivo.adicionarAnalise(analiseSalva);
                 }
 
             } catch (Exception e) {

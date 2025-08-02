@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AnaliseCodigoRepository {
     List<AnaliseCodigo> saveAll(List<AnaliseCodigo> analises);
+
+    AnaliseCodigo save(AnaliseCodigo analiseCodigo);
 }

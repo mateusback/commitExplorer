@@ -11,19 +11,19 @@ public class AnaliseCodigo {
     private ArquivoAlterado arquivoAlterado;
 
     public void registrarAnaliseBoa(ArquivoAlterado arquivoAlterado) {
+        this.arquivoAlterado = arquivoAlterado;
         this.descricaoSmell = "Nenhum problema encontrado";
         this.severidade = 0;
         this.pontuacaoNegativa = 0;
         this.tipo = TipoAnalise.INFO;
-        this.arquivoAlterado = arquivoAlterado;
     }
 
     public void registrarAnaliseRuim(String descricaoSmell, Integer severidade, Integer pontuacaoNegativa, ArquivoAlterado arquivoAlterado) {
+        this.arquivoAlterado = arquivoAlterado;
         this.descricaoSmell = descricaoSmell;
         this.severidade = severidade;
         this.pontuacaoNegativa = pontuacaoNegativa;
         this.tipo = TipoAnalise.SMELL;
-        this.arquivoAlterado = arquivoAlterado;
     }
 
     // <editor-fold desc="Getters">

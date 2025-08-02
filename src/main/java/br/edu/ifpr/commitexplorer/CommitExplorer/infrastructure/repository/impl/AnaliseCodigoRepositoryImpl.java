@@ -36,4 +36,11 @@ public class AnaliseCodigoRepositoryImpl implements AnaliseCodigoRepository {
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public AnaliseCodigo save(AnaliseCodigo analiseCodigo) {
+        AnaliseCodigoEntity entity = mapper.toEntityId(analiseCodigo);
+        AnaliseCodigoEntity savedEntity = jpaRepository.save(entity);
+        return mapper.toDomain(savedEntity);
+    }
 }
