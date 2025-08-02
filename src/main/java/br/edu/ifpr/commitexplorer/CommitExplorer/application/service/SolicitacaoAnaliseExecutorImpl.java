@@ -93,16 +93,21 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 continue;
             }
 
-            var commitNovo = new Commit();
+            var commitTemp = new Commit();
 
             var autor = obterAutor(commitExtraido);
-            commitNovo.atribuirAutor(autor);
+            commitTemp.atribuirAutor(autor);
 
-            commitNovo.atribuirBranch(branch);
-            commitNovo = commitRepository.save(commitNovo);
+            commitTemp.atribuirBranch(branch);
+
+            var commitNovo = commitRepository.save(commitTemp);
             branch.adicionarCommit(commitNovo);
             autor.adicionarCommit(commitNovo);
-            commitNovo.setArquivosAlterados(commitExtraido.getArquivosAlterados());
+            var arquivos = commitExtraido.getArquivosAlterados();
+            arquivos.forEach(arquivo -> arquivo.atribuirCommit(commitNovo));
+            var arquivosAlterados = arquivoAlteradoRepository.saveAll(arquivos);
+            commitNovo.setArquivosAlterados(arquivosAlterados);
+
 
             commitNovo.calcularPontuacaoFinal();
             commitNovo.adicionarInformacoes(commitExtraido.getMensagem(),
@@ -116,20 +121,9 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 continue;
             }
 
-            List<ArquivoAlterado> arquivosNovos = new ArrayList<>();
-
-            for (var arquivo : commitNovo.getArquivosAlterados()) {
-                arquivo.atribuirCommit(commitNovo);
-                arquivosNovos.add(arquivo);
-            }
-
-            var listArquivos = arquivoAlteradoRepository.saveAll(arquivosNovos);
-            commitNovo.setArquivosAlterados(listArquivos);
-
             var analises = codeAnalyzer.analyze(commitNovo);
             if (!analises.isEmpty()) {
-                var analisesSalvas = analiseCodigoRepository.saveAll(analises);
-                commitNovo.adicionarAnalisesCodigo(analisesSalvas);
+                analiseCodigoRepository.saveAll(analises);
             }
 
             commitRepository.update(commitNovo);

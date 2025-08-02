@@ -3,6 +3,8 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AutorEntity;
 
+import java.util.List;
+
 public interface AutorMapper {
     AutorEntity toEntity(Autor domain);
 
@@ -17,6 +19,8 @@ public interface AutorMapper {
      */
     AutorEntity toEntityId(Autor domain);
 
+    List<AutorEntity> toEntity(List<Autor> domainList);
+
     Autor toDomain(AutorEntity entity);
 
     /**
@@ -29,4 +33,6 @@ public interface AutorMapper {
      * @return o objeto de domínio correspondente sem associação de commits
      */
     Autor toDomainId(AutorEntity entity);
+
+    List<Autor> toDomain(List<AutorEntity> entityList);
 }

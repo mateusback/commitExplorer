@@ -9,6 +9,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CommitMapperImpl implements CommitMapper {
 
@@ -30,11 +33,7 @@ public class CommitMapperImpl implements CommitMapper {
     public CommitEntity toEntity(Commit domain) {
         var entity = baseEntity(domain);
         if (domain.getArquivosAlterados() != null) {
-            entity.setArquivosAlterados(
-                domain.getArquivosAlterados().stream()
-                    .map(arquivoAlteradoMapper::toEntityId)
-                    .toList()
-            );
+            entity.setArquivosAlterados(arquivoAlteradoMapper.toEntity(domain.getArquivosAlterados()));
         }
         if (domain.getAutor() != null) {
             entity.setAutor(autorMapper.toEntityId(domain.getAutor()));
@@ -51,14 +50,20 @@ public class CommitMapperImpl implements CommitMapper {
     }
 
     @Override
+    public List<CommitEntity> toEntity(List<Commit> domainList) {
+        if (domainList == null || domainList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return domainList.stream()
+                .map(this::toEntity)
+                .toList();
+    }
+
+    @Override
     public Commit toDomain(CommitEntity entity) {
         var domain = baseDomain(entity);
         if (entity.getArquivosAlterados() != null) {
-            domain.setArquivosAlterados(
-                entity.getArquivosAlterados().stream()
-                    .map(arquivoAlteradoMapper::toDomainId)
-                    .toList()
-            );
+            domain.setArquivosAlterados(arquivoAlteradoMapper.toDomain(entity.getArquivosAlterados()));
         }
         if (entity.getAutor() != null) {
             domain.setAutor(autorMapper.toDomainId(entity.getAutor()));
@@ -72,6 +77,16 @@ public class CommitMapperImpl implements CommitMapper {
     @Override
     public Commit toDomainId(CommitEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<Commit> toDomain(List<CommitEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return entityList.stream()
+                .map(this::toDomain)
+                .toList();
     }
 
 

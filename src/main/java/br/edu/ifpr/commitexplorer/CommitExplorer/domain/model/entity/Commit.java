@@ -44,18 +44,6 @@ public class Commit {
         this.arquivosAlterados.addAll(arquivosAlterados);
     }
 
-    public void adicionarAnalisesCodigo(List<AnaliseCodigo> analises) {
-        if (this.arquivosAlterados == null || analises == null) return;
-
-        for (var analise : analises) {
-            for (var arquivo : this.arquivosAlterados) {
-                if (arquivo.getNomeArquivo().equals(analise.getArquivoAlterado().getNomeArquivo())) {
-                    arquivo.adicionarAnalise(analise);
-                }
-            }
-        }
-    }
-
     public void calcularPontuacaoFinal() {
         if (this.arquivosAlterados == null || this.arquivosAlterados.isEmpty()) {
             this.pontuacao = 10.0f;

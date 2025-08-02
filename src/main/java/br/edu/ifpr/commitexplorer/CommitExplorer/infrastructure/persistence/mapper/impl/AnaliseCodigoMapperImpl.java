@@ -6,6 +6,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ArquivoAlteradoMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
 
@@ -33,6 +36,16 @@ public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
     }
 
     @Override
+    public List<AnaliseCodigoEntity> toEntity(List<AnaliseCodigo> domainList) {
+        if (domainList == null || domainList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return domainList.stream()
+                .map(this::toEntity)
+                .toList();
+    }
+
+    @Override
     public AnaliseCodigo toDomain(AnaliseCodigoEntity entity) {
         var domain = baseDomain(entity);
 
@@ -47,6 +60,16 @@ public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
     @Override
     public AnaliseCodigo toDomainId(AnaliseCodigoEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<AnaliseCodigo> toDomain(List<AnaliseCodigoEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return entityList.stream()
+                .map(this::toDomain)
+                .toList();
     }
 
 

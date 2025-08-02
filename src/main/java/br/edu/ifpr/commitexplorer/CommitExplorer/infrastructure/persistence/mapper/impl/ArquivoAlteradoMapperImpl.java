@@ -8,6 +8,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class ArquivoAlteradoMapperImpl implements ArquivoAlteradoMapper {
 
@@ -25,11 +28,9 @@ public class ArquivoAlteradoMapperImpl implements ArquivoAlteradoMapper {
     @Override
     public ArquivoAlteradoEntity toEntity(ArquivoAlterado domain) {
         var entity = baseEntity(domain);
-        //todo - fazer um mapper de lista
-//        if (domain.getAnalisesCodigo() != null) {
-//            entity.setAnalisesCodigo(analiseCodigoMapper.toEntityId(domain.getAnalisesCodigo()));
-//        }
-
+        if (domain.getAnalisesCodigo() != null) {
+            entity.setAnalisesCodigo(analiseCodigoMapper.toEntity(domain.getAnalisesCodigo()));
+        }
         if (domain.getCommit() != null) {
             entity.setCommit(commitMapper.toEntityId(domain.getCommit()));
         }
@@ -43,20 +44,40 @@ public class ArquivoAlteradoMapperImpl implements ArquivoAlteradoMapper {
     }
 
     @Override
+    public List<ArquivoAlteradoEntity> toEntity(List<ArquivoAlterado> domainList) {
+        if (domainList == null || domainList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return domainList.stream()
+                .map(this::toEntity)
+                .toList();
+    }
+
+    @Override
     public ArquivoAlterado toDomain(ArquivoAlteradoEntity entity) {
         var domain = baseDomain(entity);
         if (entity.getCommit() != null) {
             domain.setCommit(commitMapper.toDomainId(entity.getCommit()));
         }
-//        if (domain.getAnalisesCodigo() != null) {
-//            entity.setAnalisesCodigo(analiseCodigoMapper.toEntityId(domain.getAnalisesCodigo()));
-//        }
+        if (entity.getAnalisesCodigo() != null) {
+            domain.setAnalisesCodigo(analiseCodigoMapper.toDomain(entity.getAnalisesCodigo()));
+        }
         return domain;
     }
 
     @Override
     public ArquivoAlterado toDomainId(ArquivoAlteradoEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<ArquivoAlterado> toDomain(List<ArquivoAlteradoEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return entityList.stream()
+                .map(this::toDomain)
+                .toList();
     }
 
 

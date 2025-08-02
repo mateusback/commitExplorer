@@ -3,15 +3,28 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Projeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.ProjetoEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ProjetoMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.RepositorioMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProjetoMapperImpl implements ProjetoMapper {
 
+    private final RepositorioMapper repositorioMapper;
+
+    public ProjetoMapperImpl(@Lazy RepositorioMapper repositorioMapper) {
+        this.repositorioMapper = repositorioMapper;
+    }
+
     @Override
     public ProjetoEntity toEntity(Projeto domain) {
         var entity = baseEntity(domain);
-        //entity.setRepositorios();
+        if (domain.getRepositorios() != null) {
+            entity.setRepositorios(repositorioMapper.toEntity(domain.getRepositorios()));
+        }
         return entity;
     }
 
@@ -22,15 +35,35 @@ public class ProjetoMapperImpl implements ProjetoMapper {
     }
 
     @Override
+    public List<ProjetoEntity> toEntity(List<Projeto> domainList) {
+        if (domainList == null || domainList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return domainList.stream()
+                .map(this::toEntityId)
+                .toList();
+    }
+
+    @Override
     public Projeto toDomain(ProjetoEntity entity) {
         var domain = baseDomain(entity);
-        //domain.setRepositorios();
+
         return domain;
     }
 
     @Override
     public Projeto toDomainId(ProjetoEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<Projeto> toDomain(List<ProjetoEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return entityList.stream()
+                .map(this::toDomainId)
+                .toList();
     }
 
 

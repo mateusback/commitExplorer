@@ -7,6 +7,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class AutorMapperImpl implements AutorMapper {
 
@@ -19,11 +22,8 @@ public class AutorMapperImpl implements AutorMapper {
     @Override
     public AutorEntity toEntity(Autor domain) {
         var entity = baseEntity(domain);
-        // todo - trocar para um mapper de lista
         if (domain.getCommits() != null) {
-            entity.setCommits(domain.getCommits().stream()
-                    .map(commitMapper::toEntityId)
-                    .toList());
+            entity.setCommits(commitMapper.toEntity(domain.getCommits()));
         }
         return entity;
     }
@@ -34,13 +34,20 @@ public class AutorMapperImpl implements AutorMapper {
     }
 
     @Override
+    public List<AutorEntity> toEntity(List<Autor> domainList) {
+        if (domainList == null || domainList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return domainList.stream()
+                .map(this::toEntity)
+                .toList();
+    }
+
+    @Override
     public Autor toDomain(AutorEntity entity) {
         var domain = baseDomain(entity);
-        // todo - trocar para um mapper de lista
         if (entity.getCommits() != null) {
-            domain.setCommits(entity.getCommits().stream()
-                    .map(commitMapper::toDomainId)
-                    .toList());
+            domain.setCommits(commitMapper.toDomain(entity.getCommits()));
         }
         return domain;
     }
@@ -48,6 +55,16 @@ public class AutorMapperImpl implements AutorMapper {
     @Override
     public Autor toDomainId(AutorEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<Autor> toDomain(List<AutorEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return entityList.stream()
+                .map(this::toDomain)
+                .toList();
     }
 
 

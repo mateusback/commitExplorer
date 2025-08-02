@@ -3,6 +3,8 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Projeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.ProjetoEntity;
 
+import java.util.List;
+
 public interface ProjetoMapper {
     ProjetoEntity toEntity(Projeto domain);
 
@@ -17,6 +19,8 @@ public interface ProjetoMapper {
      */
     ProjetoEntity toEntityId(Projeto domain);
 
+    List<ProjetoEntity> toEntity(List<Projeto> domainList);
+
     Projeto toDomain(ProjetoEntity entity);
 
     /**
@@ -29,4 +33,6 @@ public interface ProjetoMapper {
      * @return o objeto de domínio correspondente sem associação de commits
      */
     Projeto toDomainId(ProjetoEntity entity);
+
+    List<Projeto> toDomain(List<ProjetoEntity> entityList);
 }

@@ -7,6 +7,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.RepositorioMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class RepositorioMapperImpl implements RepositorioMapper {
 
@@ -25,11 +28,7 @@ public class RepositorioMapperImpl implements RepositorioMapper {
             entity.setProjeto(projetoMapper.toEntityId(domain.getProjeto()));
         }
         if (domain.getBranches() != null) {
-            entity.setBranches(
-                domain.getBranches().stream()
-                    .map(branchMapper::toEntityId)
-                    .toList()
-            );
+            entity.setBranches(branchMapper.toEntity(domain.getBranches()));
         }
         return entity;
     }
@@ -40,21 +39,41 @@ public class RepositorioMapperImpl implements RepositorioMapper {
     }
 
     @Override
+    public List<RepositorioEntity> toEntity(List<Repositorio> domain) {
+        if (domain == null || domain.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return domain.stream()
+                .map(this::toEntityId)
+                .toList();
+    }
+
+    @Override
     public Repositorio toDomain(RepositorioEntity entity) {
         var domain = baseDomain(entity);
-        if (entity.getBranches() != null) {
-            domain.setBranches(
-                entity.getBranches().stream()
-                    .map(branchMapper::toDomainId)
-                    .toList()
-            );
+        if (entity.getProjeto() != null) {
+            domain.setProjeto(projetoMapper.toDomainId(entity.getProjeto()));
         }
+        if (entity.getBranches() != null) {
+            domain.setBranches(branchMapper.toDomain(entity.getBranches()));
+        }
+
         return domain;
     }
 
     @Override
     public Repositorio toDomainId(RepositorioEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<Repositorio> toDomain(List<RepositorioEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return entityList.stream()
+                .map(this::toDomainId)
+                .toList();
     }
 
     private RepositorioEntity baseEntity(Repositorio domain) {

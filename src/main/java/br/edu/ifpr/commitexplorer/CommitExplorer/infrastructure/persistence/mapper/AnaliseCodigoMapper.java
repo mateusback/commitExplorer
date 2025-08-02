@@ -3,6 +3,8 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseCodigoEntity;
 
+import java.util.List;
+
 public interface AnaliseCodigoMapper {
     AnaliseCodigoEntity toEntity(AnaliseCodigo domain);
 
@@ -17,6 +19,8 @@ public interface AnaliseCodigoMapper {
      */
     AnaliseCodigoEntity toEntityId(AnaliseCodigo domain);
 
+    List<AnaliseCodigoEntity> toEntity(List<AnaliseCodigo> domainList);
+
     AnaliseCodigo toDomain(AnaliseCodigoEntity entity);
 
     /**
@@ -29,4 +33,6 @@ public interface AnaliseCodigoMapper {
      * @return o objeto de domínio correspondente sem associação de commits
      */
     AnaliseCodigo toDomainId(AnaliseCodigoEntity entity);
+
+    List<AnaliseCodigo> toDomain(List<AnaliseCodigoEntity> entityList);
 }

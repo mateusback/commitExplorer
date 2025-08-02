@@ -27,7 +27,7 @@ public class AnaliseCodigoRepositoryImpl implements AnaliseCodigoRepository {
     @Override
     public List<AnaliseCodigo> saveAll(List<AnaliseCodigo> analises) {
         List<AnaliseCodigoEntity> entities = analises.stream()
-                .map(mapper::toEntityId)
+                .map(mapper::toEntity)
                 .collect(Collectors.toList());
 
         List<AnaliseCodigoEntity> savedEntities = jpaRepository.saveAll(entities);
@@ -39,7 +39,7 @@ public class AnaliseCodigoRepositoryImpl implements AnaliseCodigoRepository {
 
     @Override
     public AnaliseCodigo save(AnaliseCodigo analiseCodigo) {
-        AnaliseCodigoEntity entity = mapper.toEntityId(analiseCodigo);
+        AnaliseCodigoEntity entity = mapper.toEntity(analiseCodigo);
         AnaliseCodigoEntity savedEntity = jpaRepository.save(entity);
         return mapper.toDomain(savedEntity);
     }

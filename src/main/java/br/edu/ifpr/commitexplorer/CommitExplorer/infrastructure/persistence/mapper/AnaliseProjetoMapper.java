@@ -5,6 +5,8 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProj
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseCodigoEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseProjetoEntity;
 
+import java.util.List;
+
 public interface AnaliseProjetoMapper {
     AnaliseProjetoEntity toEntity(AnaliseProjeto domain);
 
@@ -17,8 +19,10 @@ public interface AnaliseProjetoMapper {
      * @param domain o objeto de domínio a ser convertido
      * @return a entidade correspondente sem associação de commits
      */
-
     AnaliseProjetoEntity toEntityId(AnaliseProjeto domain);
+
+    List<AnaliseProjetoEntity> toEntity(List<AnaliseProjeto> domainList);
+
     AnaliseProjeto toDomain(AnaliseProjetoEntity entity);
 
     /**
@@ -31,4 +35,6 @@ public interface AnaliseProjetoMapper {
      * @return o objeto de domínio correspondente sem associação de análises de código
      */
     AnaliseProjeto toDomainId(AnaliseProjetoEntity entity);
+
+    List<AnaliseProjeto> toDomain(List<AnaliseProjetoEntity> entityList);
 }

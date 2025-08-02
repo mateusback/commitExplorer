@@ -5,6 +5,8 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Repositorio
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.ProjetoEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.RepositorioEntity;
 
+import java.util.List;
+
 public interface RepositorioMapper {
     RepositorioEntity toEntity(Repositorio domain);
 
@@ -19,6 +21,8 @@ public interface RepositorioMapper {
      */
     RepositorioEntity toEntityId(Repositorio domain);
 
+    List<RepositorioEntity> toEntity(List<Repositorio> domain);
+
     Repositorio toDomain(RepositorioEntity entity);
 
     /**
@@ -31,4 +35,6 @@ public interface RepositorioMapper {
      * @return o objeto de domínio correspondente sem associação de projetos
      */
     Repositorio toDomainId(RepositorioEntity entity);
+
+    List<Repositorio> toDomain(List<RepositorioEntity> entityList);
 }

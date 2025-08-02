@@ -1,9 +1,9 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper;
 
-import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.ArquivoAlterado;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseCodigoEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.ArquivoAlteradoEntity;
+
+import java.util.List;
 
 public interface ArquivoAlteradoMapper {
     ArquivoAlteradoEntity toEntity(ArquivoAlterado domain);
@@ -19,6 +19,8 @@ public interface ArquivoAlteradoMapper {
      */
     ArquivoAlteradoEntity toEntityId(ArquivoAlterado domain);
 
+    List<ArquivoAlteradoEntity> toEntity(List<ArquivoAlterado> domainList);
+
     ArquivoAlterado toDomain(ArquivoAlteradoEntity entity);
 
     /**
@@ -31,4 +33,6 @@ public interface ArquivoAlteradoMapper {
      * @return o objeto de domínio correspondente sem associação de commits
      */
     ArquivoAlterado toDomainId(ArquivoAlteradoEntity entity);
+
+    List<ArquivoAlterado> toDomain(List<ArquivoAlteradoEntity> entityList);
 }

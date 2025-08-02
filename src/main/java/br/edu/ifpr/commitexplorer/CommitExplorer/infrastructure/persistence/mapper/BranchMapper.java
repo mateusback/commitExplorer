@@ -5,6 +5,8 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Branch;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AutorEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.BranchEntity;
 
+import java.util.List;
+
 public interface BranchMapper {
 
     BranchEntity toEntity(Branch domain);
@@ -20,6 +22,8 @@ public interface BranchMapper {
      */
     BranchEntity toEntityId(Branch domain);
 
+    List<BranchEntity> toEntity(List<Branch> domainList);
+
     Branch toDomain(BranchEntity entity);
 
     /**
@@ -32,4 +36,6 @@ public interface BranchMapper {
      * @return o objeto de domínio correspondente sem associação de commits
      */
     Branch toDomainId(BranchEntity entity);
+
+    List<Branch> toDomain(List<BranchEntity> entityList);
 }

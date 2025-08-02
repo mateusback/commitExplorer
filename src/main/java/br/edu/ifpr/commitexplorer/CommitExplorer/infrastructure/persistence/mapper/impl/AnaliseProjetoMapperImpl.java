@@ -4,12 +4,16 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProj
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseProjetoEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.SolicitacaoAnaliseMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
 
     private BranchMapper branchMapper;
+    private SolicitacaoAnaliseMapper solicitacaoAnaliseMapper;
 
     public AnaliseProjetoMapperImpl(BranchMapper branchMapper) {
         this.branchMapper = branchMapper;
@@ -21,6 +25,9 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         if (domain.getBranch() != null) {
             entity.setBranch(branchMapper.toEntityId(domain.getBranch()));
         }
+        if (domain.getSolicitacaoAnalise() != null) {
+            entity.setSolicitacaoAnalise(solicitacaoAnaliseMapper.toEntity(domain.getSolicitacaoAnalise()));
+        }
         return entity;
     }
 
@@ -29,16 +36,39 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
     }
 
     @Override
+    public List<AnaliseProjetoEntity> toEntity(List<AnaliseProjeto> domainList) {
+        if( domainList == null || domainList.isEmpty()) {
+            return List.of();
+        }
+        return domainList.stream()
+                .map(this::toEntityId)
+                .toList();
+    }
+
+    @Override
     public AnaliseProjeto toDomain(AnaliseProjetoEntity entity) {
         var domain = baseDomain(entity);
         if (entity.getBranch() != null) {
             domain.setBranch(branchMapper.toDomainId(entity.getBranch()));
+        }
+        if (entity.getSolicitacaoAnalise() != null) {
+            domain.setSolicitacaoAnalise(solicitacaoAnaliseMapper.toDomain(entity.getSolicitacaoAnalise()));
         }
         return domain;
     }
 
     public AnaliseProjeto toDomainId(AnaliseProjetoEntity entity) {
         return baseDomain(entity);
+    }
+
+    @Override
+    public List<AnaliseProjeto> toDomain(List<AnaliseProjetoEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return List.of();
+        }
+        return entityList.stream()
+                .map(this::toDomainId)
+                .toList();
     }
 
     private AnaliseProjetoEntity baseEntity(AnaliseProjeto domain) {
