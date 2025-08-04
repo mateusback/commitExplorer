@@ -15,8 +15,9 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
     private BranchMapper branchMapper;
     private SolicitacaoAnaliseMapper solicitacaoAnaliseMapper;
 
-    public AnaliseProjetoMapperImpl(BranchMapper branchMapper) {
+    public AnaliseProjetoMapperImpl(BranchMapper branchMapper, SolicitacaoAnaliseMapper solicitacaoAnaliseMapper) {
         this.branchMapper = branchMapper;
+        this.solicitacaoAnaliseMapper = solicitacaoAnaliseMapper;
     }
 
     @Override

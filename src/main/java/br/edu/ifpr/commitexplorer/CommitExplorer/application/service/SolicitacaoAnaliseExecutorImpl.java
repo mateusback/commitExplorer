@@ -131,6 +131,8 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         }
         var analiseProjeto = new AnaliseProjeto();
         analiseProjeto.consolidar(novosCommits, solicitacao);
+        analiseProjeto.setBranch(branch);
+        analiseProjeto.setSolicitacaoAnalise(solicitacao);
         analiseProjetoRepository.save(analiseProjeto);
 
         branch.adicionarAnalise(analiseProjeto);
@@ -142,6 +144,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         branchRepository.save(branch);
 
         solicitacaoRepository.save(solicitacao);
+
 
         //TODO - FICA PRA PROXIMA IMPLMENTAÇÃO
         //notificacaoService.enviarEmailConclusao(solicitacao.getProjetoUrl());

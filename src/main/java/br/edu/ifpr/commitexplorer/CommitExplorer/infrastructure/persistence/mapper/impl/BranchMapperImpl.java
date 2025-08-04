@@ -38,7 +38,7 @@ public class BranchMapperImpl implements BranchMapper {
         if (domain.getCommits() != null) {
             entity.setCommits(commitMapper.toEntity(domain.getCommits()));
         }
-        entity.setRepositorio(repositorioMapper.toEntityId(domain.getRepositorio()));
+        entity.setRepositorio(repositorioMapper.toEntity(domain.getRepositorio()));
         return entity;
     }
 
