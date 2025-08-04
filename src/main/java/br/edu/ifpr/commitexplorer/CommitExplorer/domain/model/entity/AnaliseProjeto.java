@@ -1,5 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAnalise;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,34 +33,42 @@ public class AnaliseProjeto {
     }
 
     public void consolidar(List<Commit> commits, SolicitacaoAnalise solicitacao) {
-        int totalSmells = commits.stream()
-                .flatMap(c -> c.getArquivosAlterados().stream())
-                .flatMap(a -> a.getAnalisesCodigo().stream())
-                .mapToInt(a -> a.getPontuacaoNegativa() != null ? 1 : 0)
-                .sum();
+        this.vincularSolicitacao(solicitacao);
 
-        int totalCommits = commits.size();
+        this.totalCommits = commits.size();
+        this.totalAutores = calcularTotalAutores(commits);
+        this.quantidadeCodeSmells = calcularTotalCodeSmells(commits);
+        this.complexidadeMedia = calcularMediaComplexidade(commits);
+        this.pontuacaoTotal = calcularPontuacaoTotal(commits);
+    }
 
-        int totalAutores = (int) commits.stream()
+    private int calcularTotalAutores(List<Commit> commits) {
+        return (int) commits.stream()
                 .map(c -> c.getAutor().getEmail())
+                .filter(Objects::nonNull)
                 .distinct()
                 .count();
+    }
 
-        double mediaScore = commits.stream()
+    private int calcularTotalCodeSmells(List<Commit> commits) {
+        return (int) commits.stream()
+                .flatMap(c -> c.getArquivosAlterados().stream())
+                .flatMap(a -> a.getAnalisesCodigo().stream())
+                .filter(analise -> analise.getTipo() == TipoAnalise.SMELL)
+                .count();
+    }
+
+    private double calcularMediaComplexidade(List<Commit> commits) {
+        return commits.stream()
                 .map(Commit::getPontuacao)
                 .filter(Objects::nonNull)
                 .mapToDouble(Float::doubleValue)
                 .average()
                 .orElse(10.0);
+    }
 
-        AnaliseProjeto analise = new AnaliseProjeto();
-        analise.vincularSolicitacao(solicitacao);
-        analise.atribuirDados(
-                totalSmells,
-                totalCommits,
-                totalAutores,
-                (float) mediaScore
-        );
+    private double calcularPontuacaoTotal(List<Commit> commits) {
+        return calcularMediaComplexidade(commits);
     }
 
     // <editor-fold desc="Getters">

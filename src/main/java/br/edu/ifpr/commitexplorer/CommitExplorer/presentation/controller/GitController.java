@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,7 +35,7 @@ public class GitController {
             @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
-    @PostMapping("/analyze")
+    @PostMapping(value = "/analyze", produces = MediaType.APPLICATION_JSON_VALUE)
     public AnalisarRepositorioView analyzeRepository(@RequestBody AnalisarRepositorioRequest request) {
 
         var command = AnalisarRepositorioRequestMapper.toCommand(request);

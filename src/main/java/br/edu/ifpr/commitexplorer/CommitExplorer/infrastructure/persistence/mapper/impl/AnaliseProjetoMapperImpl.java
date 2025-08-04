@@ -78,6 +78,7 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         entity.setDataAnalise(domain.getDataAnalise());
         entity.setStatusAnalise(domain.getStatusAnalise());
         entity.setComplexidadeMedia(domain.getComplexidadeMedia());
+        entity.setQuantidadeCodeSmells(domain.getQuantidadeCodeSmells());
         entity.setPontuacaoTotal(domain.getPontuacaoTotal());
         entity.setTotalCommits(domain.getTotalCommits());
         entity.setTotalAutores(domain.getTotalAutores());
@@ -91,6 +92,7 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         domain.setDataAnalise(entity.getDataAnalise());
         domain.setStatusAnalise(entity.getStatusAnalise());
         domain.setComplexidadeMedia(entity.getComplexidadeMedia());
+        domain.setQuantidadeCodeSmells(entity.getQuantidadeCodeSmells());
         domain.setPontuacaoTotal(entity.getPontuacaoTotal());
         domain.setTotalCommits(entity.getTotalCommits());
         domain.setTotalAutores(entity.getTotalAutores());

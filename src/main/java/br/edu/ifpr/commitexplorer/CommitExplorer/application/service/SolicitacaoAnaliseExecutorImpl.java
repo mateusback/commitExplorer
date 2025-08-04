@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.*;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.*;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.CodeAnalyzerService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitRepositoryCloner;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecutor {
 
@@ -59,6 +61,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     @Transactional
     public void processar(ProcessarSolicitacaoCommand command) {
         var solicitacao = solicitacaoRepository.findById(command.getSolicitacaoId());
+        log.info("Iniciando análise para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
 
         solicitacao.iniciarAnalise();
         solicitacaoRepository.save(solicitacao);
@@ -68,6 +71,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 solicitacao.getBranch(),
                 solicitacao.getToken()
         );
+        log.info("Diretório clonado: {}", diretorio);
 
         var projeto = new Projeto("Projeto de Análise", solicitacao.getProjetoUrl());
         var projetoSalvo = projetoRepository.save(projeto);
@@ -118,17 +122,20 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
             if (!codeAnalyzer.isValidCommit(commitNovo)) {
                 commitNovo.calcularPontuacaoFinal();
                 commitRepository.save(commitNovo);
+                novosCommits.add(commitNovo);
                 continue;
             }
 
             var analises = codeAnalyzer.analyze(commitNovo);
             if (!analises.isEmpty()) {
                 analiseCodigoRepository.saveAll(analises);
+                commitNovo.setArquivosAlterados(arquivosAlterados);
             }
 
             commitRepository.update(commitNovo);
             novosCommits.add(commitNovo);
         }
+
         var analiseProjeto = new AnaliseProjeto();
         analiseProjeto.consolidar(novosCommits, solicitacao);
         analiseProjeto.setBranch(branch);
@@ -145,6 +152,10 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
 
         solicitacaoRepository.save(solicitacao);
 
+        log.info("Análise concluída com sucesso para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
+
+        diretorio.delete();
+        log.info("Diretório temporário removido: {}", diretorio);
 
         //TODO - FICA PRA PROXIMA IMPLMENTAÇÃO
         //notificacaoService.enviarEmailConclusao(solicitacao.getProjetoUrl());
