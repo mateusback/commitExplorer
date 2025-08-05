@@ -13,4 +13,6 @@ public class ObterAnalisesProjetoView {
     private int totalCommits;
     private float pontuacaoMedia;
     private List<ResumoAnaliseView> analises;
+    private List<AutorView> autores;
+    private List<CommitView> commits;
 }

@@ -5,4 +5,5 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Branch;
 
 public interface BranchRepository {
     Branch save(Branch branch);
+    Branch findById(long id);
 }

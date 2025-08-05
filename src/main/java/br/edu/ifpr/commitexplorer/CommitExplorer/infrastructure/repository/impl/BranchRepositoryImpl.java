@@ -23,4 +23,11 @@ public class BranchRepositoryImpl implements BranchRepository {
         return autorMapper.toDomain(saved);
     }
 
+    @Override
+    public Branch findById(long id) {
+        var optionalEntity = autorJpaRepository.findByIdBranch(id);
+        var entity = optionalEntity.orElseThrow(() -> new RuntimeException("Branch not found with id: " + id));
+        return autorMapper.toDomain(entity);
+    }
+
 }

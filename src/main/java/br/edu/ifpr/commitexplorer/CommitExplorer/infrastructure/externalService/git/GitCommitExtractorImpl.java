@@ -45,36 +45,37 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
                 RevCommit headCommit = revWalk.parseCommit(branchHead);
                 revWalk.markStart(headCommit);
 
-                RevCommit previous = null;
-                for (RevCommit current : revWalk) {
-                    if (previous == null) {
-                        previous = current;
-                        continue;
-                    }
-
-                    List<ArquivoAlterado> arquivos = extrairDiffs(repository, previous, current);
-
-                    LocalDateTime dataCommit = current.getAuthorIdent()
+                for (RevCommit commit : revWalk) {
+                    LocalDateTime dataCommit = commit.getAuthorIdent()
                             .getWhenAsInstant()
                             .atZone(ZoneId.systemDefault())
                             .toLocalDateTime();
 
+                    boolean isMergeCommit = commit.getParentCount() > 1;
+                    List<ArquivoAlterado> arquivos = new ArrayList<>();
+
+                    if (!isMergeCommit && commit.getParentCount() > 0) {
+                        RevCommit parent = commit.getParent(0);
+                        arquivos = extrairDiffs(repository, parent, commit);
+                    }
+
                     Commit novoCommit = new Commit();
                     novoCommit.registrarCommit(
-                            current.getFullMessage(),
-                            current.getName(),
+                            commit.getFullMessage(),
+                            commit.getName(),
                             dataCommit,
                             arquivos
                     );
 
-                    Autor autor = new Autor(current.getAuthorIdent().getName(), current.getAuthorIdent().getEmailAddress());
+                    novoCommit.marcarComoMerge(isMergeCommit);
+
+                    Autor autor = new Autor(commit.getAuthorIdent().getName(), commit.getAuthorIdent().getEmailAddress());
                     novoCommit.atribuirAutor(autor);
 
                     Branch b = new Branch(branch);
                     novoCommit.atribuirBranch(b);
 
                     commits.add(novoCommit);
-                    previous = current;
                 }
 
                 revWalk.dispose();

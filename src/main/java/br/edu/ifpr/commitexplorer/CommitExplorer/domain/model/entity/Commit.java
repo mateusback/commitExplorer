@@ -14,6 +14,7 @@ public class Commit {
     private Branch branch;
     private Autor autor;
     private List<ArquivoAlterado> arquivosAlterados;
+    private boolean ehMerge;
 
     public void adicionarInformacoes(String mensagem, String hash, LocalDateTime commitDate, Integer complexidadeGeral) {
         this.mensagem = mensagem;
@@ -65,6 +66,13 @@ public class Commit {
 
         float scoreFinal = 10.0f - (penalidadeTotal / 10.0f);
         this.pontuacao = Math.max(scoreFinal, 0.0f);
+    }
+
+    public void marcarComoMerge(boolean ehMerge) {
+        this.ehMerge = ehMerge;
+    }
+    public boolean isEhMerge() {
+        return ehMerge;
     }
 
     // <editor-fold desc="Getters">

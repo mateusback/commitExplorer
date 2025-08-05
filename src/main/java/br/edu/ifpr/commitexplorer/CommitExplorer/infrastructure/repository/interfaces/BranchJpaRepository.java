@@ -3,6 +3,8 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.inte
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.BranchEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BranchJpaRepository extends JpaRepository<BranchEntity, Long> {
+import java.util.Optional;
 
+public interface BranchJpaRepository extends JpaRepository<BranchEntity, Long> {
+    public Optional<BranchEntity> findByIdBranch(long idBranch);
 }
