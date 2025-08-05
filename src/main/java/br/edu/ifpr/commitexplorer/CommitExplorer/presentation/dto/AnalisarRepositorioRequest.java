@@ -15,7 +15,7 @@ public class AnalisarRepositorioRequest {
     private String accessToken;
 
     @Schema(description = "Lista de repositórios com URL e branch")
-    private List<RepositorioAlvoRequest> repositorios;
+    private List<RepositorioAlvoRequest> repositories;
 
     @Schema(description = "URL do projeto no GitHub, com issues e pull requests", example = "https://github.com/usuario/projects/1", nullable = true)
     private String projectUrl;
@@ -31,7 +31,7 @@ public class AnalisarRepositorioRequest {
     public static class RepositorioAlvoRequest {
 
         @Schema(description = "URL do repositório Git", example = "https://github.com/usuario/repositorio")
-        private String repoUrl;
+        private String url;
 
         @Schema(description = "Branch que será analisada", example = "main")
         private String branch;

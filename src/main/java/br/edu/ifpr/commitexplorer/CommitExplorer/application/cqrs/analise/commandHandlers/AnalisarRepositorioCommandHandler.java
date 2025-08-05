@@ -70,6 +70,9 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
         }
 
         log.info("Total de repositórios para análise: {}", repositoriosParaAnalisar);
-        return new AnalisarRepositorioView();
+        return new AnalisarRepositorioView(
+                "Solicitação de análise de repositórios recebida com sucesso.",
+                repositoriosParaAnalisar
+        );
     }
 }

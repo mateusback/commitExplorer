@@ -11,9 +11,9 @@ public class AnalisarRepositorioRequestMapper {
 
     //TODO - verificar se é necessário o uso do MapStruct para este mapper
     public static AnalisarRepositorioCommand toCommand(AnalisarRepositorioRequest request) {
-        List<RepositorioAlvo> repositorios = request.getRepositorios()
+        List<RepositorioAlvo> repositorios = request.getRepositories()
                 .stream()
-                .map(dto -> new RepositorioAlvo(dto.getRepoUrl(), dto.getBranch()))
+                .map(dto -> new RepositorioAlvo(dto.getUrl(), dto.getBranch()))
                 .collect(Collectors.toList());
 
         return new AnalisarRepositorioCommand(

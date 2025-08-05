@@ -16,10 +16,18 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
         this.jpaRepository = jpaRepository;
         this.mapper = mapper;
     }
+
     @Override
     public Projeto save(Projeto repositorio) {
         ProjetoEntity entity = mapper.toEntity(repositorio);
         ProjetoEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
+    }
+
+    @Override
+    public java.util.List<Projeto> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }
