@@ -85,7 +85,7 @@ public class RepositorioMapperImpl implements RepositorioMapper {
     }
 
     private Repositorio baseDomain(RepositorioEntity entity) {
-        var domain = new Repositorio(entity.getNome(), entity.getUrlRepo(), projetoMapper.toDomain(entity.getProjeto()));
+        var domain = new Repositorio(entity.getNome(), entity.getUrlRepo(), projetoMapper.toDomainId(entity.getProjeto()));
         domain.setIdRepositorio(entity.getIdRepositorio());
         return domain;
     }

@@ -16,6 +16,7 @@ public class AnaliseProjeto {
     private Double complexidadeMedia;
     private Integer statusAnalise;
     private Double tempoAnalise;
+    private Projeto projeto;
     private Branch branch;
     private SolicitacaoAnalise solicitacaoAnalise;
 
@@ -32,7 +33,8 @@ public class AnaliseProjeto {
         this.pontuacaoTotal = 10.0;
     }
 
-    public void consolidar(List<Commit> commits, SolicitacaoAnalise solicitacao) {
+    public void consolidar(List<Commit> commits, SolicitacaoAnalise solicitacao, Projeto projeto) {
+        this.projeto = projeto;
         this.vincularSolicitacao(solicitacao);
 
         this.totalCommits = commits.size();
@@ -102,6 +104,9 @@ public class AnaliseProjeto {
     public Branch getBranch() {
         return branch;
     }
+    public Projeto getProjeto() {
+        return projeto;
+    }
     public SolicitacaoAnalise getSolicitacaoAnalise() {
         return solicitacaoAnalise;
     }
@@ -137,6 +142,9 @@ public class AnaliseProjeto {
     }
     public void setBranch(Branch branch) {
         this.branch = branch;
+    }
+    public void setProjeto(Projeto projeto) {
+        this.projeto = projeto;
     }
     public void setSolicitacaoAnalise(SolicitacaoAnalise solicitacaoAnalise) {
         this.solicitacaoAnalise = solicitacaoAnalise;

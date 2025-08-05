@@ -24,6 +24,10 @@ public class AnaliseProjetoEntity {
     private Integer statusAnalise;
     private Double tempoAnalise;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_projeto", nullable = false)
+    private ProjetoEntity projeto;
+
     @ManyToOne
     @JoinColumn(name = "id_branch")
     private BranchEntity branch;

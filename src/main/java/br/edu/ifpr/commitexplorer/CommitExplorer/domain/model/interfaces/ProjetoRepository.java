@@ -7,4 +7,5 @@ import java.util.List;
 public interface ProjetoRepository {
     Projeto save(Projeto projeto);
     List<Projeto> findAll();
+    Projeto findById(Long id);
 }

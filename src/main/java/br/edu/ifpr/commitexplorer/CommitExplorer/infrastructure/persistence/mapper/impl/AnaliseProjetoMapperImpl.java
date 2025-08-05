@@ -4,7 +4,9 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProj
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseProjetoEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.SolicitacaoAnaliseMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +14,14 @@ import java.util.List;
 @Service
 public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
 
-    private BranchMapper branchMapper;
-    private SolicitacaoAnaliseMapper solicitacaoAnaliseMapper;
+    private final ProjetoMapper projetoMapper;
+    private final BranchMapper branchMapper;
+    private final SolicitacaoAnaliseMapper solicitacaoAnaliseMapper;
 
-    public AnaliseProjetoMapperImpl(BranchMapper branchMapper, SolicitacaoAnaliseMapper solicitacaoAnaliseMapper) {
+    public AnaliseProjetoMapperImpl(@Lazy ProjetoMapper projetoMapper,
+                                    @Lazy BranchMapper branchMapper,
+                                    SolicitacaoAnaliseMapper solicitacaoAnaliseMapper) {
+        this.projetoMapper = projetoMapper;
         this.branchMapper = branchMapper;
         this.solicitacaoAnaliseMapper = solicitacaoAnaliseMapper;
     }
@@ -23,6 +29,9 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
     @Override
     public AnaliseProjetoEntity toEntity(AnaliseProjeto domain) {
         var entity = baseEntity(domain);
+        if (domain.getProjeto() != null) {
+            entity.setProjeto(projetoMapper.toEntityId(domain.getProjeto()));
+        }
         if (domain.getBranch() != null) {
             entity.setBranch(branchMapper.toEntityId(domain.getBranch()));
         }
@@ -49,6 +58,9 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
     @Override
     public AnaliseProjeto toDomain(AnaliseProjetoEntity entity) {
         var domain = baseDomain(entity);
+        if (entity.getProjeto() != null) {
+            domain.setProjeto(projetoMapper.toDomainId(entity.getProjeto()));
+        }
         if (entity.getBranch() != null) {
             domain.setBranch(branchMapper.toDomainId(entity.getBranch()));
         }

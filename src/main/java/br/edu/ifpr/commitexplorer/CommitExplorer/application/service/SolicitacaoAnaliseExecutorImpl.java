@@ -22,7 +22,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     private final GitRepositoryCloner gitRepositoryCloner;
     private final SolicitacaoAnaliseRepository solicitacaoRepository;
     private final GitCommitExtractor gitCommitExtractor;
-    //TODO - VER SE FICA MELHOR CENTRALIZAR ESSES REPOSITÓRIOS NO DE COMMIT
     private final CommitRepository commitRepository;
     private final AutorRepository autorRepository;
     private final AnaliseCodigoRepository analiseCodigoRepository;
@@ -137,7 +136,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         }
 
         var analiseProjeto = new AnaliseProjeto();
-        analiseProjeto.consolidar(novosCommits, solicitacao);
+        analiseProjeto.consolidar(novosCommits, solicitacao, projetoSalvo);
         analiseProjeto.setBranch(branch);
         analiseProjeto.setSolicitacaoAnalise(solicitacao);
         analiseProjetoRepository.save(analiseProjeto);

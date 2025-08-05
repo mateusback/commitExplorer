@@ -2,6 +2,7 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Projeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.ProjetoEntity;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.RepositorioMapper;
 import org.springframework.context.annotation.Lazy;
@@ -14,9 +15,12 @@ import java.util.List;
 public class ProjetoMapperImpl implements ProjetoMapper {
 
     private final RepositorioMapper repositorioMapper;
+    private final AnaliseProjetoMapper analiseProjetoMapper;
 
-    public ProjetoMapperImpl(@Lazy RepositorioMapper repositorioMapper) {
+    public ProjetoMapperImpl(@Lazy RepositorioMapper repositorioMapper,
+                             @Lazy AnaliseProjetoMapper analiseProjetoMapper) {
         this.repositorioMapper = repositorioMapper;
+        this.analiseProjetoMapper = analiseProjetoMapper;
     }
 
     @Override
@@ -25,13 +29,15 @@ public class ProjetoMapperImpl implements ProjetoMapper {
         if (domain.getRepositorios() != null) {
             entity.setRepositorios(repositorioMapper.toEntity(domain.getRepositorios()));
         }
+        if (domain.getAnalises() != null) {
+            entity.setAnalises(analiseProjetoMapper.toEntity(domain.getAnalises()));
+        }
         return entity;
     }
 
     @Override
     public ProjetoEntity toEntityId(Projeto domain) {
-        var entity = baseEntity(domain);
-        return entity;
+        return baseEntity(domain);
     }
 
     @Override
@@ -47,7 +53,12 @@ public class ProjetoMapperImpl implements ProjetoMapper {
     @Override
     public Projeto toDomain(ProjetoEntity entity) {
         var domain = baseDomain(entity);
-
+        if (entity.getRepositorios() != null) {
+            domain.setRepositorios(repositorioMapper.toDomain(entity.getRepositorios()));
+        }
+        if (entity.getAnalises() != null) {
+            domain.setAnalises(analiseProjetoMapper.toDomain(entity.getAnalises()));
+        }
         return domain;
     }
 

@@ -30,4 +30,11 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public Projeto findById(Long id) {
+        return jpaRepository.findById(id)
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalArgumentException("Projeto não encontrado com o ID: " + id));
+    }
 }

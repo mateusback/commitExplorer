@@ -8,4 +8,5 @@ public interface AnaliseProjetoRepository {
     AnaliseProjeto save(AnaliseProjeto analiseProjeto);
     AnaliseProjeto findById(Long id);
     List<AnaliseProjeto> findAll();
+    List<AnaliseProjeto> findByProjetoId(Long projetoId);
 }

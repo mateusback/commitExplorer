@@ -16,8 +16,11 @@ public class ProjetoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idProjeto;
     private String nome;
-    private LocalDateTime dataCriacao;
     private String projetoUrl;
+    private LocalDateTime dataCriacao;
+
+    @OneToMany(mappedBy = "projeto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnaliseProjetoEntity> analises;
 
     @OneToMany(mappedBy = "projeto")
     private List<RepositorioEntity> repositorios;

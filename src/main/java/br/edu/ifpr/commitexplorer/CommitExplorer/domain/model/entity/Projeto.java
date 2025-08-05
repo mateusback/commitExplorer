@@ -1,6 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Projeto {
@@ -9,6 +10,7 @@ public class Projeto {
     private String projetoUrl;
     private LocalDateTime dataCriacao;
     private List<Repositorio> repositorios;
+    private List<AnaliseProjeto> analises;
 
     public Projeto(String nome, String projetoUrl) {
         this.nome = nome;
@@ -23,6 +25,15 @@ public class Projeto {
         this.repositorios.add(repositorio);
         repositorio.setProjeto(this);
     }
+
+    public void adicionarAnalise(AnaliseProjeto analise) {
+        if (this.analises == null) {
+            this.analises = new ArrayList<>();
+        }
+        this.analises.add(analise);
+        analise.setProjeto(this);
+    }
+
 
     // <editor-fold desc="Getters">
     public Long getIdProjeto() {
@@ -39,6 +50,9 @@ public class Projeto {
     }
     public List<Repositorio> getRepositorios() {
         return repositorios;
+    }
+    public List<AnaliseProjeto> getAnalises() {
+        return analises;
     }
     // </editor-fold>
 
@@ -57,6 +71,9 @@ public class Projeto {
     }
     public void setRepositorios(List<Repositorio> repositorios) {
         this.repositorios = repositorios;
+    }
+    public void setAnalises(List<AnaliseProjeto> analises) {
+        this.analises = analises;
     }
     // </editor-fold>
 }

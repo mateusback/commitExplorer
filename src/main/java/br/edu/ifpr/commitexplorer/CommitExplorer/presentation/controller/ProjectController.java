@@ -1,6 +1,8 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.controller;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterAnalisesProjetoQuery;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterProjetosQuery;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterAnalisesProjetoView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterAnalisesView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterProjetosView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
@@ -40,4 +42,16 @@ public class ProjectController {
         var view = mediatorHandler.enviarConsulta(new ObterProjetosQuery());
         return ResponseEntity.ok(view);
     }
+
+    @GetMapping(value = "/analysis/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ObterAnalisesProjetoView> getProjectAnalysis(@PathVariable("id") String projectId) {
+        if (projectId == null || projectId.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        var id = Long.parseLong(projectId);
+        var view = mediatorHandler.enviarConsulta(new ObterAnalisesProjetoQuery(id));
+        return ResponseEntity.ok(view);
+    }
+
 }

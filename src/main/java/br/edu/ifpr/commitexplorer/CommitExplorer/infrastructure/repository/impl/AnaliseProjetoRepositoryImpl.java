@@ -19,7 +19,6 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
         this.analiseProjetoMapper = analiseProjetoMapper;
     }
 
-
     @Override
     public AnaliseProjeto save(AnaliseProjeto analiseProjeto) {
         var entity = analiseProjetoMapper.toEntity(analiseProjeto);
@@ -37,6 +36,14 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     @Override
     public List<AnaliseProjeto> findAll() {
         return analiseProjetoJpaRepository.findAll()
+                .stream()
+                .map(analiseProjetoMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<AnaliseProjeto> findByProjetoId(Long projetoId) {
+        return analiseProjetoJpaRepository.findByProjeto_IdProjeto(projetoId)
                 .stream()
                 .map(analiseProjetoMapper::toDomain)
                 .toList();
