@@ -117,6 +117,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                     commitExtraido.getHash(),
                     commitExtraido.getCommitDate(),
                     commitExtraido.getComplexidadeGeral());
+            commitNovo.marcarComoMerge(commitExtraido.isEhMerge());
 
             if (!codeAnalyzer.isValidCommit(commitNovo)) {
                 commitNovo.calcularPontuacaoFinal();

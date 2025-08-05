@@ -51,6 +51,11 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
                             .atZone(ZoneId.systemDefault())
                             .toLocalDateTime();
 
+                    LocalDate dataCommitLocal = dataCommit.toLocalDate();
+                    if (dataCommitLocal.isBefore(dataInicio) || dataCommitLocal.isAfter(dataFim)) {
+                        continue;
+                    }
+
                     boolean isMergeCommit = commit.getParentCount() > 1;
                     List<ArquivoAlterado> arquivos = new ArrayList<>();
 
@@ -58,7 +63,7 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
                         RevCommit parent = commit.getParent(0);
                         arquivos = extrairDiffs(repository, parent, commit);
                     }
-
+                    processarArquivosAlterados(arquivos);
                     Commit novoCommit = new Commit();
                     novoCommit.registrarCommit(
                             commit.getFullMessage(),
@@ -120,13 +125,15 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
                     if (diff.getChangeType() != DiffEntry.ChangeType.ADD) {
                         ObjectId oldId = diff.getOldId().toObjectId();
                         ObjectLoader oldLoader = repository.open(oldId);
-                        conteudoAntes = new String(oldLoader.getBytes(), StandardCharsets.UTF_8);
+                        byte[] bytes = oldLoader.getBytes();
+                        conteudoAntes = limparConteudo(new String(bytes, StandardCharsets.UTF_8));
                     }
 
                     if (diff.getChangeType() != DiffEntry.ChangeType.DELETE) {
                         ObjectId newId = diff.getNewId().toObjectId();
                         ObjectLoader newLoader = repository.open(newId);
-                        conteudoDepois = new String(newLoader.getBytes(), StandardCharsets.UTF_8);
+                        byte[] bytes = newLoader.getBytes();
+                        conteudoDepois = limparConteudo(new String(bytes, StandardCharsets.UTF_8));
                     }
 
                     String patch = getPatchAsString(repository, diff);
@@ -176,6 +183,32 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
         return (int) Arrays.stream(patch.split("\n"))
                 .filter(l -> l.startsWith("-") && !l.startsWith("---"))
                 .count();
+    }
+
+    private void processarArquivosAlterados(List<ArquivoAlterado> arquivos) {
+        if(arquivos == null || arquivos.isEmpty()) return;
+        for (var arquivo : arquivos) {
+            if (arquivo.getConteudoAntes() == null) {
+                arquivo.setConteudoAntes("");
+            }
+            if (arquivo.getConteudoDepois() == null) {
+                arquivo.setConteudoDepois("");
+            }
+            if (arquivo.getFlgTipoAcao() == TipoAcao.REMOVIDO) {
+                arquivo.setConteudoDepois("");
+            } else if (arquivo.getFlgTipoAcao() == TipoAcao.ADICIONADO) {
+                arquivo.setConteudoAntes("");
+            }
+        }
+    }
+
+    private String limparConteudo(String conteudo) {
+        if (conteudo == null) return null;
+
+        String limpo = conteudo.replace("\u0000", "");
+
+        int limite = 500_000; // ~500 KB
+        return limpo.length() > limite ? limpo.substring(0, limite) : limpo;
     }
 
 }

@@ -17,10 +17,12 @@ public class CommitEntity {
     private Long idCommit;
 
     private String hash;
+    @Column(columnDefinition = "TEXT")
     private String mensagem;
     private LocalDateTime commitDate;
     private Float pontuacao;
     private Integer complexidadeGeral;
+    private boolean ehMerge;
 
     @ManyToOne
     @JoinColumn(name = "id_branch")

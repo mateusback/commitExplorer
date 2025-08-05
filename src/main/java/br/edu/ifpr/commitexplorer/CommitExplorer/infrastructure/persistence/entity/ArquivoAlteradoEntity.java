@@ -23,11 +23,10 @@ public class ArquivoAlteradoEntity {
     private Integer qtdLinhasRemovidas;
     private String nomeArquivo;
 
-    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "TEXT")
     private String conteudoAntes;
 
-    //TODO RESOLVER AQUI PORQUE O LOB DA PROBLEMA DE SERIALIZAÇÃO
-    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "TEXT")
     private String conteudoDepois;
 
     @ManyToOne

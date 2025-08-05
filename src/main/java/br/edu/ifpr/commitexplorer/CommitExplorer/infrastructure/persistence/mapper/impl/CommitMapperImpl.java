@@ -89,7 +89,6 @@ public class CommitMapperImpl implements CommitMapper {
                 .toList();
     }
 
-
     private CommitEntity baseEntity(Commit domain) {
         var entity = new CommitEntity();
         entity.setIdCommit(domain.getIdCommit());
@@ -98,6 +97,7 @@ public class CommitMapperImpl implements CommitMapper {
         entity.setComplexidadeGeral(domain.getComplexidadeGeral());
         entity.setMensagem(domain.getMensagem());
         entity.setPontuacao(domain.getPontuacao());
+        entity.setEhMerge(domain.isEhMerge());
         return entity;
     }
 
@@ -109,6 +109,7 @@ public class CommitMapperImpl implements CommitMapper {
         domain.setComplexidadeGeral(entity.getComplexidadeGeral());
         domain.setMensagem(entity.getMensagem());
         domain.setPontuacao(entity.getPontuacao());
+        domain.marcarComoMerge(entity.isEhMerge());
         return domain;
     }
 }
