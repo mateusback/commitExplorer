@@ -11,7 +11,7 @@ public class InformacoesCommitView {
     private String hash;
     private boolean ehMerge;
     private String mensagem;
-    private String autor;
+    private InformacoesAutorView autor;
     private String dataCommit;
     private Float pontuacao;
     private Integer complexidadeGeral;
@@ -25,7 +25,7 @@ public class InformacoesCommitView {
         this.hash = commit.getHash();
         this.ehMerge = commit.isEhMerge();
         this.mensagem = commit.getMensagem();
-        this.autor = commit.getAutor().getNome();
+        this.autor = new InformacoesAutorView(commit.getAutor());
         this.dataCommit = commit.getCommitDate().toString();
         this.pontuacao = commit.getPontuacao();
         this.complexidadeGeral = commit.getComplexidadeGeral();
