@@ -45,4 +45,11 @@ public class CommitRepositoryImpl implements CommitRepository {
         }
         return mapper.toDomain(entity);
     }
+
+    @Override
+    public Commit obterInformacoesCommit(Long idCommit) {
+        CommitEntity entity = jpaRepository.findById(idCommit)
+                .orElseThrow(() -> new IllegalArgumentException("Commit não encontrado"));
+        return mapper.toDomain(entity);
+    }
 }

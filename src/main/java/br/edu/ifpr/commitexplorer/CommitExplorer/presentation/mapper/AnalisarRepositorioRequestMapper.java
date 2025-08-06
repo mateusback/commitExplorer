@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 public class AnalisarRepositorioRequestMapper {
 
-    //TODO - verificar se é necessário o uso do MapStruct para este mapper
     public static AnalisarRepositorioCommand toCommand(AnalisarRepositorioRequest request) {
         List<RepositorioAlvo> repositorios = request.getRepositories()
                 .stream()
