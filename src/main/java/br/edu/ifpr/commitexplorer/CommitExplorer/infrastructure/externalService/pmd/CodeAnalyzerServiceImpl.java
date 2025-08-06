@@ -30,12 +30,15 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
         }
 
         List<AnaliseCodigo> resultado = new ArrayList<>();
+        List<Float> pontuacoesArquivos = new ArrayList<>();
 
         for (ArquivoAlterado arquivo : commit.getArquivosAlterados()) {
             String nome = arquivo.getNomeArquivo();
             String content = arquivo.getConteudoDepois();
 
             if (nome == null || !nome.endsWith(".java") || content == null) continue;
+
+            float pontuacaoArquivo = 100f;
 
             try {
                 var report = PMDExecutor.analyzeFile(nome, content);
@@ -46,28 +49,52 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
                     analiseOk.registrarAnaliseBoa(arquivo);
                     var analiseOkSalva = analiseCodigoRepository.save(analiseOk);
                     resultado.add(analiseOkSalva);
+                    pontuacoesArquivos.add(pontuacaoArquivo);
                     continue;
                 }
 
                 for (var violation : violations) {
+                    int prioridade = violation.getRule().getPriority().getPriority();
+                    int peso = calcularPesoPorPrioridade(prioridade);
+
                     AnaliseCodigo analise = new AnaliseCodigo();
                     analise.registrarAnaliseRuim(
                             violation.getRule().getName() + ": " + violation.getDescription(),
-                            violation.getRule().getPriority().getPriority(),
-                            violation.getRule().getPriority().getPriority(),
+                            prioridade,
+                            peso,
                             arquivo
                     );
                     var analiseSalva = analiseCodigoRepository.save(analise);
                     resultado.add(analiseSalva);
                     arquivo.adicionarAnalise(analiseSalva);
+                    pontuacaoArquivo -= peso;
                 }
+
+                if (pontuacaoArquivo < 0) pontuacaoArquivo = 0;
+                pontuacoesArquivos.add(pontuacaoArquivo);
 
             } catch (Exception e) {
                 log.warn("Erro ao analisar arquivo {} no commit {}", nome, commit.getHash(), e);
             }
         }
 
+        if (!pontuacoesArquivos.isEmpty()) {
+            float media = (float) pontuacoesArquivos.stream().mapToDouble(Float::doubleValue).average().orElse(100.0);
+            commit.setPontuacao(media);
+        }
+
         return resultado;
+    }
+
+    private int calcularPesoPorPrioridade(int prioridade) {
+        return switch (prioridade) {
+            case 1 -> 10;
+            case 2 -> 7;
+            case 3 -> 5;
+            case 4 -> 3;
+            case 5 -> 1;
+            default -> 5;
+        };
     }
 
     @Override

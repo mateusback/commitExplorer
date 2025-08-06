@@ -66,7 +66,7 @@ public class AnaliseProjeto {
                 .filter(Objects::nonNull)
                 .mapToDouble(Float::doubleValue)
                 .average()
-                .orElse(10.0);
+                .orElse(100.0);
     }
 
     private double calcularPontuacaoTotal(List<Commit> commits) {
