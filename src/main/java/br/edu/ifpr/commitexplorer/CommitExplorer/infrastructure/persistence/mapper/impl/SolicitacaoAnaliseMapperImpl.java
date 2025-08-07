@@ -22,6 +22,8 @@ public class SolicitacaoAnaliseMapperImpl implements SolicitacaoAnaliseMapper {
         entity.setBranch(domain.getBranch());
         entity.setProjetoUrl(domain.getProjetoUrl());
         entity.setToken(domain.getToken());
+        entity.setNomeProjeto(domain.getNomeProjeto());
+
         return entity;
     }
 
@@ -44,6 +46,7 @@ public class SolicitacaoAnaliseMapperImpl implements SolicitacaoAnaliseMapper {
         solicitacaoAnalise.setBranch(entity.getBranch());
         solicitacaoAnalise.setProjetoUrl(entity.getProjetoUrl());
         solicitacaoAnalise.setToken(entity.getToken());
+        solicitacaoAnalise.setNomeProjeto(entity.getNomeProjeto());
 
         return solicitacaoAnalise;
     }

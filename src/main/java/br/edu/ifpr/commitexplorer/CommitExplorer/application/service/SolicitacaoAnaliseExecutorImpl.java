@@ -72,7 +72,9 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         );
         log.info("Diretório clonado: {}", diretorio);
 
-        var projeto = new Projeto("Projeto de Análise", solicitacao.getProjetoUrl());
+        //TODO - MOSTRAR A DATA DA ANALISE NA TELA DE PROJETOS
+        //todo - verificar commits, se tá faltando linhas adicionadas
+        var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
         var projetoSalvo = projetoRepository.save(projeto);
 
         var repositorio = new Repositorio("Repositorio de Análise", solicitacao.getRepositorioUrl(), projetoSalvo);

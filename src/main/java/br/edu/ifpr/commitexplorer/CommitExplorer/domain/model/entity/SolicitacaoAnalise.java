@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class SolicitacaoAnalise {
 
     private Long idSolicitacaoAnalise;
+    private String nomeProjeto;
     private LocalDateTime dataSolicitacao = LocalDateTime.now();
     private LocalDate dataInicio;
     private LocalDate dataFim;
@@ -101,6 +102,10 @@ public class SolicitacaoAnalise {
     public String getMensagemErro() {
         return mensagemErro;
     }
+
+    public String getNomeProjeto() {
+        return nomeProjeto;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -139,6 +144,9 @@ public class SolicitacaoAnalise {
     }
     public void setMensagemErro(String mensagemErro) {
         this.mensagemErro = mensagemErro;
+    }
+    public void setNomeProjeto(String nomeProjeto) {
+        this.nomeProjeto = nomeProjeto;
     }
     // </editor-fold>
 }

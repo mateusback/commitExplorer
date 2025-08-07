@@ -78,8 +78,11 @@ public class ObterAnalisesProjetoQueryHandler implements QueryHandler<ObterAnali
     private ResumoAnaliseView montarResumoAnalise(AnaliseProjeto analise) {
         var resumo = new ResumoAnaliseView();
         var branch = analise.getBranch();
+        var solicitacao = analise.getSolicitacaoAnalise();
 
         resumo.setDataAnalise(analise.getDataAnalise());
+        resumo.setDataInicio(solicitacao.getDataInicioAnalise().toString());
+        resumo.setDataFim(solicitacao.getDataFim().toString());
         resumo.setNomeBranch(branch != null ? branch.getNome() : null);
         resumo.setUrlRepo(branch != null && branch.getRepositorio() != null ? branch.getRepositorio().getUrlRepo() : null);
         resumo.setTotalCommits(defaultInt(analise.getTotalCommits()));

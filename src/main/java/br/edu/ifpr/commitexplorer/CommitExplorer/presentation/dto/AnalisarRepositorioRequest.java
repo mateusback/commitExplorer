@@ -26,6 +26,9 @@ public class AnalisarRepositorioRequest {
     @Schema(description = "Data final para análise dos commits", example = "2024-12-31", nullable = true)
     private LocalDate endDate;
 
+    @Schema(description = "Nome do projeto", example = "BackEnd - Commit Explorer")
+    private String projectName;
+
     @Getter
     @Setter
     public static class RepositorioAlvoRequest {

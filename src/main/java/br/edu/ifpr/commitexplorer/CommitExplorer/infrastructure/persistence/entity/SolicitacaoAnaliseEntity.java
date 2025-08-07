@@ -23,6 +23,7 @@ public class SolicitacaoAnaliseEntity {
     private LocalDate dataFim;
     private LocalDateTime dataInicioAnalise;
     private LocalDateTime dataFimAnalise;
+    private String nomeProjeto;
 
     private String repositorioUrl;
     private String branch;

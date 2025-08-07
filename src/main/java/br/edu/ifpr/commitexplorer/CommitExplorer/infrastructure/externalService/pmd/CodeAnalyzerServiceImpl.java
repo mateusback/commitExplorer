@@ -87,6 +87,7 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
     }
 
     private int calcularPesoPorPrioridade(int prioridade) {
+        //todo achar referencia para a tabela de prioridades do PMD
         return switch (prioridade) {
             case 1 -> 10;
             case 2 -> 7;

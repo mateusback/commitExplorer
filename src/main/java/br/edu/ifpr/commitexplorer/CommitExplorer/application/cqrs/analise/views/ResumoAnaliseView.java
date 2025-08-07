@@ -15,4 +15,6 @@ public class ResumoAnaliseView {
     private Integer quantidadeCodeSmells;
     private Double complexidadeMedia;
     private Double pontuacaoTotal;
+    private String dataInicio;
+    private String dataFim;
 }
