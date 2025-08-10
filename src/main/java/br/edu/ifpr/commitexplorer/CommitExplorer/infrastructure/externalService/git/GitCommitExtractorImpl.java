@@ -1,33 +1,31 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.externalService.git;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.GitCommitExtractor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.ArquivoAlterado;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Branch;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAcao;
-import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.GitCommitExtractor;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.EmptyTreeIterator;
+import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -45,45 +43,30 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
                 RevCommit headCommit = revWalk.parseCommit(branchHead);
                 revWalk.markStart(headCommit);
 
-                for (RevCommit commit : revWalk) {
-                    LocalDateTime dataCommit = commit.getAuthorIdent()
-                            .getWhenAsInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime();
+                for (RevCommit rc : revWalk) {
+                    LocalDateTime dataCommit = rc.getAuthorIdent().getWhenAsInstant()
+                            .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-                    LocalDate dataCommitLocal = dataCommit.toLocalDate();
-                    if (dataCommitLocal.isBefore(dataInicio) || dataCommitLocal.isAfter(dataFim)) {
-                        continue;
-                    }
+                    LocalDate d = dataCommit.toLocalDate();
+                    if (d.isBefore(dataInicio) || d.isAfter(dataFim)) continue;
 
-                    boolean isMergeCommit = commit.getParentCount() > 1;
-                    List<ArquivoAlterado> arquivos = new ArrayList<>();
+                    boolean isMerge = rc.getParentCount() > 1;
 
-                    if (!isMergeCommit && commit.getParentCount() > 0) {
-                        RevCommit parent = commit.getParent(0);
-                        arquivos = extrairDiffs(repository, parent, commit);
-                    }
-                    processarArquivosAlterados(arquivos);
-                    Commit novoCommit = new Commit();
-                    novoCommit.registrarCommit(
-                            commit.getFullMessage(),
-                            commit.getName(),
-                            dataCommit,
-                            arquivos
-                    );
+                    List<ArquivoAlterado> arquivos = switch (rc.getParentCount()) {
+                        case 0 -> scanArquivos(repository, new EmptyTreeIterator(), createTreeParser(repository, rc));
+                        default -> isMerge
+                                ? List.of()
+                                : scanArquivos(repository, createTreeParser(repository, rc.getParent(0)), createTreeParser(repository, rc));
+                    };
 
-                    novoCommit.marcarComoMerge(isMergeCommit);
+                    Commit c = new Commit();
+                    c.registrarCommit(rc.getFullMessage(), rc.getName(), dataCommit, arquivos);
+                    c.marcarComoMerge(isMerge);
+                    c.atribuirAutor(new Autor(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress()));
+                    c.atribuirBranch(new Branch(branch));
 
-                    Autor autor = new Autor(commit.getAuthorIdent().getName(), commit.getAuthorIdent().getEmailAddress());
-                    novoCommit.atribuirAutor(autor);
-
-                    Branch b = new Branch(branch);
-                    novoCommit.atribuirBranch(b);
-
-                    commits.add(novoCommit);
+                    commits.add(c);
                 }
-
-                revWalk.dispose();
             }
         } catch (Exception e) {
             throw new RuntimeException("Erro ao extrair commits: " + e.getMessage(), e);
@@ -92,123 +75,87 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
         return commits;
     }
 
+    private CanonicalTreeParser createTreeParser(Repository repo, RevCommit commit) throws Exception {
+        try (ObjectReader reader = repo.newObjectReader()) {
+            CanonicalTreeParser tree = new CanonicalTreeParser();
+            tree.reset(reader, commit.getTree());
+            return tree;
+        }
+    }
 
-    private List<ArquivoAlterado> extrairDiffs(Repository repository, RevCommit oldCommit, RevCommit newCommit) throws Exception {
+    private List<ArquivoAlterado> scanArquivos(Repository repo,
+                                               org.eclipse.jgit.treewalk.AbstractTreeIterator oldTree,
+                                               org.eclipse.jgit.treewalk.AbstractTreeIterator newTree) throws Exception {
         List<ArquivoAlterado> arquivos = new ArrayList<>();
 
-        try (ObjectReader reader = repository.newObjectReader()) {
-            CanonicalTreeParser oldTree = new CanonicalTreeParser();
-            oldTree.reset(reader, oldCommit.getTree());
+        try (DiffFormatter fmt = new DiffFormatter(DisabledOutputStream.INSTANCE)) {
+            fmt.setRepository(repo);
+            fmt.setDiffComparator(RawTextComparator.DEFAULT);
+            fmt.setDetectRenames(true);
 
-            CanonicalTreeParser newTree = new CanonicalTreeParser();
-            newTree.reset(reader, newCommit.getTree());
+            List<DiffEntry> diffs = fmt.scan(oldTree, newTree);
 
-            try (Git git = new Git(repository)) {
-                List<DiffEntry> diffs = git.diff()
-                        .setOldTree(oldTree)
-                        .setNewTree(newTree)
-                        .call();
+            ObjectId zero = ObjectId.zeroId();
 
-                DiffFormatter formatter = new DiffFormatter(new ByteArrayOutputStream());
-                formatter.setRepository(repository);
-                formatter.setDiffComparator(RawTextComparator.DEFAULT);
-                formatter.setDetectRenames(true);
+            for (DiffEntry diff : diffs) {
+                String nomeArquivo = (diff.getChangeType() == DiffEntry.ChangeType.DELETE)
+                        ? diff.getOldPath() : diff.getNewPath();
 
-                for (DiffEntry diff : diffs) {
-                    ArquivoAlterado arquivo = new ArquivoAlterado();
-                    arquivo.atribuirNomeArquivo(diff.getNewPath());
+                String antes = readBlob(repo, diff.getOldId().toObjectId(), zero);
+                String depois = readBlob(repo, diff.getNewId().toObjectId(), zero);
 
-
-                    String conteudoAntes = null;
-                    String conteudoDepois = null;
-
-                    if (diff.getChangeType() != DiffEntry.ChangeType.ADD) {
-                        ObjectId oldId = diff.getOldId().toObjectId();
-                        ObjectLoader oldLoader = repository.open(oldId);
-                        byte[] bytes = oldLoader.getBytes();
-                        conteudoAntes = limparConteudo(new String(bytes, StandardCharsets.UTF_8));
-                    }
-
-                    if (diff.getChangeType() != DiffEntry.ChangeType.DELETE) {
-                        ObjectId newId = diff.getNewId().toObjectId();
-                        ObjectLoader newLoader = repository.open(newId);
-                        byte[] bytes = newLoader.getBytes();
-                        conteudoDepois = limparConteudo(new String(bytes, StandardCharsets.UTF_8));
-                    }
-
-                    String patch = getPatchAsString(repository, diff);
-                    arquivo.adicionarAlteracoes(
-                            mapChangeType(diff.getChangeType()),
-                            conteudoAntes,
-                            conteudoDepois,
-                            contarRemovidas(patch),
-                            contarAdicionadas(patch)
-                    );
-
-                    arquivos.add(arquivo);
+                int add = 0, del = 0;
+                var edits = fmt.toFileHeader(diff).toEditList();
+                for (var e : edits) {
+                    del += (e.getEndA() - e.getBeginA());
+                    add += (e.getEndB() - e.getBeginB());
                 }
+
+                switch (diff.getChangeType()) {
+                    case ADD -> { del = 0; if (antes == null) antes = ""; }
+                    case DELETE -> { add = 0; if (depois == null) depois = ""; }
+                    default -> {}
+                }
+
+                ArquivoAlterado arq = new ArquivoAlterado();
+                arq.atribuirNomeArquivo(nomeArquivo);
+                arq.adicionarAlteracoes(
+                        mapChangeType(diff.getChangeType()),
+                        safe(antes),
+                        safe(depois),
+                        del,
+                        add
+                );
+
+                arquivos.add(arq);
             }
         }
 
         return arquivos;
     }
 
-    private TipoAcao mapChangeType(DiffEntry.ChangeType changeType) {
-        return switch (changeType) {
+    private String readBlob(Repository repo, ObjectId id, ObjectId zero) throws Exception {
+        if (id == null || id.equals(zero)) return null;
+        byte[] bytes = repo.open(id).getBytes();
+        return limparConteudo(new String(bytes, StandardCharsets.UTF_8));
+    }
+
+    private static String safe(String s) { return s == null ? "" : s; }
+
+    private TipoAcao mapChangeType(DiffEntry.ChangeType t) {
+        return switch (t) {
             case ADD -> TipoAcao.ADICIONADO;
             case MODIFY -> TipoAcao.MODIFICADO;
             case DELETE -> TipoAcao.REMOVIDO;
             case RENAME -> TipoAcao.RENOMEADO;
             case COPY -> TipoAcao.COPIADO;
-            default -> throw new IllegalArgumentException("Tipo de alteração desconhecido: " + changeType);
         };
-    }
-
-    private String getPatchAsString(Repository repo, DiffEntry diff) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (DiffFormatter formatter = new DiffFormatter(out)) {
-            formatter.setRepository(repo);
-            formatter.format(diff);
-            return out.toString(StandardCharsets.UTF_8);
-        }
-    }
-
-    private int contarAdicionadas(String patch) {
-        return (int) Arrays.stream(patch.split("\n"))
-                .filter(l -> l.startsWith("+") && !l.startsWith("+++"))
-                .count();
-    }
-
-    private int contarRemovidas(String patch) {
-        return (int) Arrays.stream(patch.split("\n"))
-                .filter(l -> l.startsWith("-") && !l.startsWith("---"))
-                .count();
-    }
-
-    private void processarArquivosAlterados(List<ArquivoAlterado> arquivos) {
-        if(arquivos == null || arquivos.isEmpty()) return;
-        for (var arquivo : arquivos) {
-            if (arquivo.getConteudoAntes() == null) {
-                arquivo.setConteudoAntes("");
-            }
-            if (arquivo.getConteudoDepois() == null) {
-                arquivo.setConteudoDepois("");
-            }
-            if (arquivo.getFlgTipoAcao() == TipoAcao.REMOVIDO) {
-                arquivo.setConteudoDepois("");
-            } else if (arquivo.getFlgTipoAcao() == TipoAcao.ADICIONADO) {
-                arquivo.setConteudoAntes("");
-            }
-        }
     }
 
     private String limparConteudo(String conteudo) {
         if (conteudo == null) return null;
-
         String limpo = conteudo.replace("\u0000", "");
-
         int limite = 500_000; // ~500 KB
         return limpo.length() > limite ? limpo.substring(0, limite) : limpo;
     }
-
 }

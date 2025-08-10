@@ -20,7 +20,7 @@ public class ArquivoAlterado {
         this.nomeArquivo = nomeArquivo;
     }
 
-    public void adicionarAlteracoes(TipoAcao flgTipoAcao, String conteudoAntes, String conteudoDepois, Integer qtdLinhasAdicionadas, Integer qtdLinhasRemovidas) {
+    public void adicionarAlteracoes(TipoAcao flgTipoAcao, String conteudoAntes, String conteudoDepois, Integer qtdLinhasRemovidas, Integer qtdLinhasAdicionadas) {
         this.flgTipoAcao = flgTipoAcao;
         this.conteudoAntes = conteudoAntes;
         this.conteudoDepois = conteudoDepois;
