@@ -10,6 +10,7 @@ public class InformacoesAnaliseCodigoView {
     private Integer severidade;
     private Integer pontuacaoNegativa;
     private String tipo;
+    private Integer linha;
 
     public InformacoesAnaliseCodigoView(AnaliseCodigo analise){
         this.id = analise.getIdAnaliseCodigo();
@@ -17,5 +18,6 @@ public class InformacoesAnaliseCodigoView {
         this.severidade = analise.getSeveridade();
         this.pontuacaoNegativa = analise.getPontuacaoNegativa();
         this.tipo = analise.getTipo().name();
+        this.linha = analise.getLinha();
     }
 }

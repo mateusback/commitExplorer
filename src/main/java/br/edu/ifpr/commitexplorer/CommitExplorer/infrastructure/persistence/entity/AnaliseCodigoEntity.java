@@ -17,6 +17,7 @@ public class AnaliseCodigoEntity {
     private String descricaoSmell;
     private Integer severidade;
     private Integer pontuacaoNegativa;
+    private Integer linha;
 
     @Enumerated(EnumType.STRING)
     private TipoAnalise tipo;

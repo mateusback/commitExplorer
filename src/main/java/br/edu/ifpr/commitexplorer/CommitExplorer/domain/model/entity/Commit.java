@@ -1,5 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoCommit;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,7 @@ public class Commit {
     private Long idCommit;
     private String hash;
     private String mensagem;
+    private TipoCommit tipo;
     private LocalDateTime commitDate;
     private Float pontuacao;
     private Integer complexidadeGeral;
@@ -71,7 +74,7 @@ public class Commit {
     public void marcarComoMerge(boolean ehMerge) {
         this.ehMerge = ehMerge;
     }
-    public boolean isEhMerge() {
+    public boolean ehMerge() {
         return ehMerge;
     }
 
@@ -103,6 +106,9 @@ public class Commit {
     public List<ArquivoAlterado> getArquivosAlterados() {
         return arquivosAlterados;
     }
+    public TipoCommit getTipo() {
+        return tipo;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -132,6 +138,9 @@ public class Commit {
     }
     public void setArquivosAlterados(List<ArquivoAlterado> arquivosAlterados) {
         this.arquivosAlterados = arquivosAlterados;
+    }
+    public void setTipo(TipoCommit tipo) {
+        this.tipo = tipo;
     }
     // </editor-fold>
 }

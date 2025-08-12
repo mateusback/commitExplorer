@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -72,7 +71,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         );
         log.info("Diretório clonado: {}", diretorio);
 
-        //TODO - MOSTRAR A DATA DA ANALISE NA TELA DE PROJETOS
         //todo - verificar commits, se tá faltando linhas adicionadas
         var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
         var projetoSalvo = projetoRepository.save(projeto);
@@ -119,7 +117,8 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                     commitExtraido.getHash(),
                     commitExtraido.getCommitDate(),
                     commitExtraido.getComplexidadeGeral());
-            commitNovo.marcarComoMerge(commitExtraido.isEhMerge());
+            commitNovo.marcarComoMerge(commitExtraido.ehMerge());
+            commitNovo.setTipo(commitExtraido.getTipo());
 
             if (!codeAnalyzer.isValidCommit(commitNovo)) {
                 commitNovo.calcularPontuacaoFinal();

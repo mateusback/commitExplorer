@@ -97,7 +97,8 @@ public class CommitMapperImpl implements CommitMapper {
         entity.setComplexidadeGeral(domain.getComplexidadeGeral());
         entity.setMensagem(domain.getMensagem());
         entity.setPontuacao(domain.getPontuacao());
-        entity.setEhMerge(domain.isEhMerge());
+        entity.setEhMerge(domain.ehMerge());
+        entity.setTipo(domain.getTipo());
         return entity;
     }
 
@@ -110,6 +111,7 @@ public class CommitMapperImpl implements CommitMapper {
         domain.setMensagem(entity.getMensagem());
         domain.setPontuacao(entity.getPontuacao());
         domain.marcarComoMerge(entity.isEhMerge());
+        domain.setTipo(entity.getTipo());
         return domain;
     }
 }

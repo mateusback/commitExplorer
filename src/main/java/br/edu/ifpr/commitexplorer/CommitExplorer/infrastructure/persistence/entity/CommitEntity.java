@@ -1,5 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAnalise;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoCommit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +25,9 @@ public class CommitEntity {
     private Float pontuacao;
     private Integer complexidadeGeral;
     private boolean ehMerge;
+
+    @Enumerated(EnumType.STRING)
+    private TipoCommit tipo;
 
     @ManyToOne
     @JoinColumn(name = "id_branch")

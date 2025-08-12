@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ResumoAnaliseView {
+    private long id;
     private String nomeProjeto;
     private String urlRepo;
     private String nomeBranch;

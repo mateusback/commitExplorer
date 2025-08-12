@@ -23,7 +23,7 @@ public class InformacoesCommitView {
     public InformacoesCommitView(Commit commit, int linhasAdicionadas, int linhasRemovidas) {
         this.id = commit.getIdCommit();
         this.hash = commit.getHash();
-        this.ehMerge = commit.isEhMerge();
+        this.ehMerge = commit.ehMerge();
         this.mensagem = commit.getMensagem();
         this.autor = new InformacoesAutorView(commit.getAutor());
         this.dataCommit = commit.getCommitDate().toString();

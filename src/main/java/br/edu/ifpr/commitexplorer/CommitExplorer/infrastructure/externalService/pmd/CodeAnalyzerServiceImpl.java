@@ -56,12 +56,14 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
                 for (var violation : violations) {
                     int prioridade = violation.getRule().getPriority().getPriority();
                     int peso = calcularPesoPorPrioridade(prioridade);
+                    int linha = violation.getBeginLine();
 
                     AnaliseCodigo analise = new AnaliseCodigo();
                     analise.registrarAnaliseRuim(
                             violation.getRule().getName() + ": " + violation.getDescription(),
                             prioridade,
                             peso,
+                            linha,
                             arquivo
                     );
                     var analiseSalva = analiseCodigoRepository.save(analise);

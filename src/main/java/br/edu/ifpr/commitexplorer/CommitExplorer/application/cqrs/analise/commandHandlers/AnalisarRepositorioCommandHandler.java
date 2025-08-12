@@ -62,7 +62,7 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
                     dataInicio,
                     dataFim
             );
-
+            solicitacao.setNomeProjeto(command.getProjectName());
             var entity = solicitacaoAnaliseRepository.save(solicitacao);
             var processarCommand = new ProcessarSolicitacaoCommand(entity.getIdSolicitacaoAnalise());
             log.info("Enviando comando para processar solicitação de análise: {}", entity.getIdSolicitacaoAnalise());

@@ -93,6 +93,7 @@ public class ObterAnalisesProjetoQueryHandler implements QueryHandler<ObterAnali
         resumo.setNomeProjeto(analise.getSolicitacaoAnalise() != null
                 ? analise.getSolicitacaoAnalise().getProjetoUrl()
                 : null);
+        resumo.setId(analise.getIdAnaliseProjeto());
 
         return resumo;
     }
@@ -156,7 +157,7 @@ public class ObterAnalisesProjetoQueryHandler implements QueryHandler<ObterAnali
                 commitView.setDataCommit(commit.getCommitDate() != null ? commit.getCommitDate().toString() : null);
                 commitView.setPontuacao(commit.getPontuacao());
                 commitView.setComplexidadeGeral(commit.getComplexidadeGeral());
-                commitView.setEhMerge(commit.isEhMerge());
+                commitView.setEhMerge(commit.ehMerge());
 
                 int adicionadas = 0;
                 int removidas = 0;

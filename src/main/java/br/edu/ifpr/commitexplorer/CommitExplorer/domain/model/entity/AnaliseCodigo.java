@@ -9,6 +9,7 @@ public class AnaliseCodigo {
     private Integer pontuacaoNegativa;
     private TipoAnalise tipo;
     private ArquivoAlterado arquivoAlterado;
+    private Integer linha;
 
     public void registrarAnaliseBoa(ArquivoAlterado arquivoAlterado) {
         this.arquivoAlterado = arquivoAlterado;
@@ -16,14 +17,16 @@ public class AnaliseCodigo {
         this.severidade = 0;
         this.pontuacaoNegativa = 0;
         this.tipo = TipoAnalise.INFO;
+        this.linha = 0;
     }
 
-    public void registrarAnaliseRuim(String descricaoSmell, Integer severidade, Integer pontuacaoNegativa, ArquivoAlterado arquivoAlterado) {
+    public void registrarAnaliseRuim(String descricaoSmell, Integer severidade, Integer pontuacaoNegativa, Integer linha, ArquivoAlterado arquivoAlterado) {
         this.arquivoAlterado = arquivoAlterado;
         this.descricaoSmell = descricaoSmell;
         this.severidade = severidade;
         this.pontuacaoNegativa = pontuacaoNegativa;
         this.tipo = TipoAnalise.SMELL;
+        this.linha = linha;
     }
 
     // <editor-fold desc="Getters">
@@ -45,6 +48,9 @@ public class AnaliseCodigo {
     public ArquivoAlterado getArquivoAlterado() {
         return arquivoAlterado;
     }
+    public Integer getLinha() {
+        return linha;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -65,6 +71,9 @@ public class AnaliseCodigo {
     }
     public void setArquivoAlterado(ArquivoAlterado arquivoAlterado) {
         this.arquivoAlterado = arquivoAlterado;
+    }
+    public void setLinha(Integer linha) {
+        this.linha = linha;
     }
     // </editor-fold>
 }

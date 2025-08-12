@@ -72,7 +72,6 @@ public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
                 .toList();
     }
 
-
     private AnaliseCodigoEntity baseEntity(AnaliseCodigo domain) {
         var entity = new AnaliseCodigoEntity();
         entity.setIdAnaliseCodigo(domain.getIdAnaliseCodigo());
@@ -80,6 +79,7 @@ public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
         entity.setSeveridade(domain.getSeveridade());
         entity.setDescricaoSmell(domain.getDescricaoSmell());
         entity.setPontuacaoNegativa(domain.getPontuacaoNegativa());
+        entity.setLinha(domain.getLinha());
         return entity;
     }
 
@@ -90,6 +90,7 @@ public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
         domain.setSeveridade(entity.getSeveridade());
         domain.setDescricaoSmell(entity.getDescricaoSmell());
         domain.setPontuacaoNegativa(entity.getPontuacaoNegativa());
+        domain.setLinha(entity.getLinha());
         return domain;
     }
 }
