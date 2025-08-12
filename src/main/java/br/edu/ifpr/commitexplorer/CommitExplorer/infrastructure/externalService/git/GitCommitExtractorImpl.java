@@ -85,7 +85,7 @@ public class GitCommitExtractorImpl implements GitCommitExtractor {
                     c.registrarCommit(rc.getFullMessage(), rc.getName(), dataCommit, arquivos);
 
                     TipoCommit tipo = isMerge
-                            ? TipoCommit.OTHER
+                            ? TipoCommit.MERGE
                             : mapTipoCommit(rc);
 
                     c.setTipo(tipo);

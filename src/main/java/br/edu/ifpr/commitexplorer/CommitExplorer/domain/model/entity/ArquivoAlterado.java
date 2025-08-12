@@ -28,6 +28,17 @@ public class ArquivoAlterado {
         this.qtdLinhasRemovidas = qtdLinhasRemovidas;
     }
 
+    public String obterNomeArquivoFinal() {
+        if (this.nomeArquivo == null || this.nomeArquivo.isEmpty()) {
+            return "Arquivo não identificado";
+        }
+
+        int idx = Math.max(this.nomeArquivo.lastIndexOf('/'), this.nomeArquivo.lastIndexOf('\\'));
+        return idx >= 0 && idx < this.nomeArquivo.length() - 1
+                ? this.nomeArquivo.substring(idx + 1)
+                : this.nomeArquivo;
+    }
+
     public void adicionarAnalise(AnaliseCodigo analise) {
         if (this.analisesCodigo == null) {
             this.analisesCodigo = new java.util.ArrayList<>();

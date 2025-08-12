@@ -8,6 +8,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProj
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.ArquivoAlterado;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Autor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAnalise;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseProjetoRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.BranchRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,11 +59,9 @@ public class ObterInformacoesAnaliseQueryHandler
         return out;
     }
 
-    // ----------------- Helpers -----------------
-
     private List<Commit> filtrarCommitsNoPeriodo(AnaliseProjeto analise) {
         var inicio = analise.getSolicitacaoAnalise().getDataInicio().atStartOfDay();
-        var fim = analise.getSolicitacaoAnalise().getDataFim().atTime(LocalTime.MAX); // inclui o dia final
+        var fim = analise.getSolicitacaoAnalise().getDataFim().atTime(LocalTime.MAX);
         return analise.getBranch().getCommits().stream()
                 .filter(c -> {
                     var dt = c.getCommitDate();
@@ -95,7 +94,7 @@ public class ObterInformacoesAnaliseQueryHandler
         v.setComplexidadeMedia(mediaComplexidade(commits));
 
         v.setCharts(List.of(construirCharts(commits)));
-        v.setCommits(mapUltimosCommits(commits, 50));
+        v.setCommits(mapUltimosCommits(commits));
         return v;
     }
 
@@ -115,11 +114,9 @@ public class ObterInformacoesAnaliseQueryHandler
         v.setComplexidadeMedia(mediaComplexidade(commitsAutor));
 
         v.setCharts(List.of(construirCharts(commitsAutor)));
-        v.setCommits(mapUltimosCommits(commitsAutor, 20));
+        v.setCommits(mapUltimosCommits(commitsAutor));
         return v;
     }
-
-    // --------- Métricas base ---------
 
     private int soma(List<Commit> commits, ToInt<ArquivoAlterado> getter) {
         return commits.stream()
@@ -131,13 +128,13 @@ public class ObterInformacoesAnaliseQueryHandler
     private int contarSmells(List<Commit> commits) {
         return commits.stream()
                 .flatMap(c -> safeList(c.getArquivosAlterados()).stream())
-                .map(a -> safeList(a.getAnalisesCodigo())) // se existir no seu modelo
-                .mapToInt(List::size)
+                .flatMap(a -> safeList(a.getAnalisesCodigo()).stream())
+                .filter(analise -> analise != null && analise.getTipo().equals(TipoAnalise.SMELL))
+                .mapToInt(x -> 1)
                 .sum();
     }
 
     private double mediaComplexidade(List<Commit> commits) {
-        // usando complexidade no Commit (complexidadeGeral). Ajuste se vier do ArquivoAlterado.
         return commits.stream()
                 .map(Commit::getComplexidadeGeral)
                 .filter(Objects::nonNull)
@@ -145,21 +142,19 @@ public class ObterInformacoesAnaliseQueryHandler
                 .average().orElse(0.0);
     }
 
-    private List<CommitView> mapUltimosCommits(List<Commit> commits, int limit) {
+    private List<CommitView> mapUltimosCommits(List<Commit> commits) {
         return commits.stream()
                 .sorted(Comparator.comparing(Commit::getCommitDate).reversed())
-                .limit(limit)
                 .map(CommitView::from)
                 .toList();
     }
 
-    // --------- Charts (preenche seu ChartAnalisesView com as 4 listas) ---------
 
     private ChartAnalisesView construirCharts(List<Commit> commits) {
         var chart = new ChartAnalisesView();
         chart.setFrequenciaCommits(chartFreqPorDia(commits));
         chart.setDistribuicaoHorarios(chartPorHora(commits));
-        chart.setTopArquivos(chartTopArquivos(commits, 5));
+        chart.setTopArquivos(chartTopArquivos(commits, 6));
         chart.setTipoCommits(chartTiposCommit(commits));
         return chart;
     }
@@ -187,8 +182,9 @@ public class ObterInformacoesAnaliseQueryHandler
     private List<TopArquivoChartView> chartTopArquivos(List<Commit> commits, int topN) {
         Map<String, Integer> porArquivo = commits.stream()
                 .flatMap(c -> safeList(c.getArquivosAlterados()).stream())
+                .filter(a -> a.obterNomeArquivoFinal() != null && !a.obterNomeArquivoFinal().contains("mvnw"))
                 .collect(Collectors.groupingBy(
-                        ArquivoAlterado::getNomeArquivo,
+                        ArquivoAlterado::obterNomeArquivoFinal,
                         Collectors.summingInt(a ->
                                 safe(a.getQtdLinhasAdicionadas()) + safe(a.getQtdLinhasRemovidas())
                         )
@@ -208,7 +204,6 @@ public class ObterInformacoesAnaliseQueryHandler
     }
 
     private List<TipoCommitChartView> chartTiposCommit(List<Commit> commits) {
-        // Usa Commit.getTipo() (enum/com string). Ajuste toString se necessário.
         Map<String, Integer> porTipo = commits.stream()
                 .collect(Collectors.groupingBy(
                         c -> c.getTipo() != null ? c.getTipo().toString() : "Outro",
@@ -227,8 +222,6 @@ public class ObterInformacoesAnaliseQueryHandler
         }
         return out;
     }
-
-    // --------- util ---------
 
     private static <T> List<T> safeList(List<T> list) {
         return list != null ? list : Collections.emptyList();

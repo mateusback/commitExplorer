@@ -14,5 +14,6 @@ public enum TipoCommit {
     RAW,
     CLEANUP,
     REMOVE,
+    MERGE,
     OTHER
 }
