@@ -71,7 +71,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         );
         log.info("Diretório clonado: {}", diretorio);
 
-        //todo - verificar commits, se tá faltando linhas adicionadas
         var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
         var projetoSalvo = projetoRepository.save(projeto);
 

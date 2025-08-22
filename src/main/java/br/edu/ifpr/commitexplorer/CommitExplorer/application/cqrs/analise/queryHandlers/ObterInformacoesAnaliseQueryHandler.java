@@ -2,6 +2,8 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.query
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterInformacoesAnaliseQuery;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.*;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.IndicadoresAnaliseService;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.PontuacaoAnaliseService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.util.DateUtils;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProjeto;
@@ -28,6 +30,8 @@ public class ObterInformacoesAnaliseQueryHandler
 
     private final AnaliseProjetoRepository analiseProjetoRepository;
     private final BranchRepository branchRepository;
+    private final IndicadoresAnaliseService indicadoresAnaliseService;
+    private final PontuacaoAnaliseService pontuacaoAnaliseService;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,10 +56,18 @@ public class ObterInformacoesAnaliseQueryHandler
         var porAutorView = autoresViews.stream()
                 .collect(Collectors.toMap(AutorResumoView::getIdAutor, Function.identity(), (a,b)->a, LinkedHashMap::new));
 
+
+        var inicio = analise.getSolicitacaoAnalise().getDataInicio();
+        var fim    = analise.getSolicitacaoAnalise().getDataFim();
+
+        var indicadores = indicadoresAnaliseService.calcular(commitsNoPeriodo, inicio, fim);
+        var feedback    = pontuacaoAnaliseService.gerarFeedback(geral, indicadores, autoresViews);
+
         var out = new ObterInformacoesAnaliseView();
         out.setGeral(geral);
         out.setAutores(autoresViews);
         out.setPorAutor(porAutorView);
+        out.setFeedback(feedback);
         return out;
     }
 

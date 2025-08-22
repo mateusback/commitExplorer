@@ -8,6 +8,7 @@ import java.util.Map;
 @Data
 public class ObterInformacoesAnaliseView {
     private GeralAnaliseView geral;
+    private FeedbackDinamicoView feedback;
     private List<AutorResumoView> autores;
     private Map<Long, AutorResumoView> porAutor;
 }
