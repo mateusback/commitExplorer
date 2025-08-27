@@ -45,9 +45,12 @@ public class AutorMapperImpl implements AutorMapper {
 
     @Override
     public Autor toDomain(AutorEntity entity) {
+        //TODO - DAR UMA OLAHDA NESSE CARA AQUI;
         var domain = baseDomain(entity);
         if (entity.getCommits() != null) {
             domain.setCommits(commitMapper.toDomain(entity.getCommits()));
+        } else{
+            domain.setCommits(new ArrayList<>());
         }
         return domain;
     }
