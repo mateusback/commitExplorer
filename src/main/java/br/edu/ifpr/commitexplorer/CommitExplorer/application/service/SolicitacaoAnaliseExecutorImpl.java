@@ -72,6 +72,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         log.info("Diretório clonado: {}", diretorio);
 
         var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
+        projeto.setUsuario(solicitacao.getUsuario());
         var projetoSalvo = projetoRepository.save(projeto);
 
         var repositorio = new Repositorio("Repositorio de Análise", solicitacao.getRepositorioUrl(), projetoSalvo);
@@ -140,6 +141,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         analiseProjeto.consolidar(novosCommits, solicitacao, projetoSalvo);
         analiseProjeto.setBranch(branch);
         analiseProjeto.setSolicitacaoAnalise(solicitacao);
+        analiseProjeto.setUsuario(projetoSalvo.getUsuario());
         analiseProjetoRepository.save(analiseProjeto);
 
         branch.adicionarAnalise(analiseProjeto);

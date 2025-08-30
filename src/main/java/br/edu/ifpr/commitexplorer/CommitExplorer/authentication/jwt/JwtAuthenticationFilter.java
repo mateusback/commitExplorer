@@ -28,6 +28,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true;
+        return path.startsWith("/auth/")
+                || path.equals("/actuator/health")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
@@ -39,14 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String token = header.substring(BEARER_PREFIX.length());
 
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    String email = jwt.getSubject(token);
-
-                    var userDetails = users.loadUserByUsername(email);
-                    var authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    String username = jwt.getSubject(token);
+                    if (StringUtils.hasText(username)) {
+                        var userDetails = users.loadUserByUsername(username);
+                        var auth = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
                 }
             }
         } catch (JwtException | IllegalArgumentException ex) {

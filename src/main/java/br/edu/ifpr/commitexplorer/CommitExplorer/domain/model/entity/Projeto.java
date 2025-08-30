@@ -1,5 +1,7 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.model.User;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ public class Projeto {
     private LocalDateTime dataCriacao;
     private List<Repositorio> repositorios;
     private List<AnaliseProjeto> analises;
+    private User usuario;
 
     public Projeto(String nome, String projetoUrl) {
         this.nome = nome;
@@ -54,6 +57,9 @@ public class Projeto {
     public List<AnaliseProjeto> getAnalises() {
         return analises;
     }
+    public User getUsuario() {
+        return usuario;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -74,6 +80,9 @@ public class Projeto {
     }
     public void setAnalises(List<AnaliseProjeto> analises) {
         this.analises = analises;
+    }
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
     }
     // </editor-fold>
 }

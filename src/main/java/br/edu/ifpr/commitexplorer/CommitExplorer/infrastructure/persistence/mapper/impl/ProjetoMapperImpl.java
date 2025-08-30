@@ -84,6 +84,7 @@ public class ProjetoMapperImpl implements ProjetoMapper {
         entity.setNome(domain.getNome());
         entity.setDataCriacao(domain.getDataCriacao());
         entity.setProjetoUrl(domain.getProjetoUrl());
+        entity.setUsuario(domain.getUsuario());
         return entity;
     }
 
@@ -91,6 +92,7 @@ public class ProjetoMapperImpl implements ProjetoMapper {
         var domain = new Projeto(entity.getNome(), entity.getProjetoUrl());
         domain.setIdProjeto(entity.getIdProjeto());
         domain.setDataCriacao(entity.getDataCriacao());
+        domain.setUsuario(entity.getUsuario());
         return domain;
     }
 }

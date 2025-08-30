@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class AnalisarRepositorioRequestMapper {
 
-    public static AnalisarRepositorioCommand toCommand(AnalisarRepositorioRequest request) {
+    public static AnalisarRepositorioCommand toCommand(AnalisarRepositorioRequest request, String email) {
         List<RepositorioAlvo> repositorios = request.getRepositories()
                 .stream()
                 .map(dto -> new RepositorioAlvo(dto.getUrl(), dto.getBranch()))
@@ -21,7 +21,8 @@ public class AnalisarRepositorioRequestMapper {
                 request.getEndDate(),
                 request.getAccessToken(),
                 request.getProjectUrl(),
-                request.getProjectName()
+                request.getProjectName(),
+                email
         );
     }
 }

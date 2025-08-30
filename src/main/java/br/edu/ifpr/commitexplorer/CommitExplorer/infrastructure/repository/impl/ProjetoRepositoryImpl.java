@@ -7,6 +7,8 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.ProjetoJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProjetoRepositoryImpl implements ProjetoRepository {
     private final ProjetoJpaRepository jpaRepository;
@@ -25,7 +27,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
-    public java.util.List<Projeto> findAll() {
+    public List<Projeto> findAll() {
         return jpaRepository.findAll().stream()
                 .map(mapper::toDomain)
                 .toList();
@@ -36,5 +38,11 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
         return jpaRepository.findById(id)
                 .map(mapper::toDomain)
                 .orElseThrow(() -> new IllegalArgumentException("Projeto não encontrado com o ID: " + id));
+    }
+
+    @Override
+    public List<Projeto> findAllByOwnerId(Long ownerId) {
+        return jpaRepository.findAllByUsuario_Id(ownerId)
+                .stream().map(mapper::toDomain).toList();
     }
 }

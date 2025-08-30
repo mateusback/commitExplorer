@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,9 +38,13 @@ public class GitController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
     @PostMapping(value = "/analyze", produces = MediaType.APPLICATION_JSON_VALUE)
-    public AnalisarRepositorioView analyzeRepository(@RequestBody AnalisarRepositorioRequest request) {
+    public AnalisarRepositorioView analyzeRepository(
+            @AuthenticationPrincipal UserDetails me,
+            @RequestBody AnalisarRepositorioRequest request) {
 
-        var command = AnalisarRepositorioRequestMapper.toCommand(request);
+        String email = me.getUsername();
+
+        var command = AnalisarRepositorioRequestMapper.toCommand(request, email);
 
         return mediatorHandler.enviarComando(command);
     }
