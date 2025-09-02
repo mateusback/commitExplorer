@@ -61,7 +61,8 @@ public class ObterInformacoesAnaliseQueryHandler
         var fim    = analise.getSolicitacaoAnalise().getDataFim();
 
         var indicadores = indicadoresAnaliseService.calcular(commitsNoPeriodo, inicio, fim);
-        var feedback    = pontuacaoAnaliseService.gerarFeedback(geral, indicadores, autoresViews);
+        
+        var feedback = pontuacaoAnaliseService.gerarFeedbackAcademico(commitsNoPeriodo, inicio, fim, indicadores);
 
         var out = new ObterInformacoesAnaliseView();
         out.setGeral(geral);
