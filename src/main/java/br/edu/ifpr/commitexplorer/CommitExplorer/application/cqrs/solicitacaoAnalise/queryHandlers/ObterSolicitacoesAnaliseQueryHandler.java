@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.repository.UserR
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.SolicitacaoAnaliseRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ObterSolicitacoesAnaliseQueryHandler implements QueryHandler<ObterSolicitacoesAnaliseQuery, ObterSolicitacoesAnaliseView> {
@@ -20,6 +21,7 @@ public class ObterSolicitacoesAnaliseQueryHandler implements QueryHandler<ObterS
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ObterSolicitacoesAnaliseView handle(ObterSolicitacoesAnaliseQuery command) {
         var usuario = userRepository.findByEmail(command.requestedByEmail());
         if (usuario.isEmpty()) {

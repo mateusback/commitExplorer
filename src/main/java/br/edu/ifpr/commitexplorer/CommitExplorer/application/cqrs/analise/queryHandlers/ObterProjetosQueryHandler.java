@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.repository.UserR
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.ProjetoRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ObterProjetosQueryHandler implements QueryHandler<ObterProjetosQuery, ObterProjetosView> {
@@ -19,6 +20,7 @@ public class ObterProjetosQueryHandler implements QueryHandler<ObterProjetosQuer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ObterProjetosView handle(ObterProjetosQuery command) {
         var usuario = userRepository.findByEmail(command.getRequestedByEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));

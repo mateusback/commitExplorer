@@ -10,6 +10,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProj
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseProjetoRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.BranchRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class ObterAnalisesProjetoQueryHandler implements QueryHandler<ObterAnali
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ObterAnalisesProjetoView handle(ObterAnalisesProjetoQuery command) {
         var analises = analiseProjetoRepository.findByProjetoId(command.getProjetoId());
         return montarResponse(analises);
