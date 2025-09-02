@@ -12,7 +12,7 @@ import java.util.List;
 public class AnalisarRepositorioRequest {
 
     @Schema(description = "Token de acesso ao repositório (se necessário)", example = "ghp_ABC123...", nullable = true)
-    private String accessToken;
+    private String githubToken;
 
     @Schema(description = "Lista de repositórios com URL e branch")
     private List<RepositorioAlvoRequest> repositories;

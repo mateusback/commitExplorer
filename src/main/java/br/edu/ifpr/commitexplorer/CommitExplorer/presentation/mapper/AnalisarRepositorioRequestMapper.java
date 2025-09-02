@@ -19,7 +19,7 @@ public class AnalisarRepositorioRequestMapper {
                 repositorios,
                 request.getStartDate(),
                 request.getEndDate(),
-                request.getAccessToken(),
+                request.getGithubToken(),
                 request.getProjectUrl(),
                 request.getProjectName(),
                 email

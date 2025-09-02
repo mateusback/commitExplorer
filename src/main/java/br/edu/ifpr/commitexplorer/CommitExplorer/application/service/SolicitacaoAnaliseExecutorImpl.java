@@ -58,109 +58,124 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     @Async
     @Transactional
     public void processar(ProcessarSolicitacaoCommand command) {
-        var solicitacao = solicitacaoRepository.findById(command.getSolicitacaoId());
-        log.info("Iniciando análise para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
+        var diretorio = (java.io.File) null;
 
-        solicitacao.iniciarAnalise();
-        solicitacaoRepository.save(solicitacao);
+        try {
+            var solicitacao = solicitacaoRepository.findById(command.getSolicitacaoId());
+            log.info("Iniciando análise para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
 
-        var diretorio = gitRepositoryCloner.clone(
-                solicitacao.getRepositorioUrl(),
-                solicitacao.getBranch(),
-                solicitacao.getToken()
-        );
-        log.info("Diretório clonado: {}", diretorio);
+            solicitacao.iniciarAnalise();
+            solicitacaoRepository.save(solicitacao);
 
-        var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
-        projeto.setUsuario(solicitacao.getUsuario());
-        var projetoSalvo = projetoRepository.save(projeto);
-
-        var repositorio = new Repositorio("Repositorio de Análise", solicitacao.getRepositorioUrl(), projetoSalvo);
-        var repositorioSalvo = repositorioRepository.save(repositorio);
-
-        var commitsExtraidos = gitCommitExtractor.extrairCommitsComDiffs(
-                diretorio,
-                solicitacao.getBranch(),
-                solicitacao.getDataInicio(),
-                solicitacao.getDataFim());
-
-        var br = new Branch(solicitacao.getBranch());
-        br.setRepositorio(repositorioSalvo);
-        br.setDataUltimaAnalise(LocalDateTime.now());
-        var branch = branchRepository.save(br);
-
-        var novosCommits = new ArrayList<Commit>();
-        for (var commitExtraido : commitsExtraidos) {
-
-            if (commitRepository.existsByHashAndRepo(commitExtraido.getHash(), solicitacao.getRepositorioUrl())) {
-                continue;
+            var cloneResult = gitRepositoryCloner.clone(solicitacao);
+            if (!cloneResult.ok()) {
+                var stringErro = "Erro ao clonar o repositório: ".concat(cloneResult.erro());
+                log.error(stringErro);
+                solicitacao.finalizarComErro(stringErro);
+                solicitacaoRepository.save(solicitacao);
+                return;
             }
+            diretorio = cloneResult.dir();
 
-            var commitTemp = new Commit();
+            log.info("Diretório clonado: {}", diretorio);
 
-            var autor = obterAutor(commitExtraido);
-            commitTemp.atribuirAutor(autor);
+            var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
+            projeto.setUsuario(solicitacao.getUsuario());
+            var projetoSalvo = projetoRepository.save(projeto);
 
-            commitTemp.atribuirBranch(branch);
+            var repositorio = new Repositorio("Repositorio de Análise", solicitacao.getRepositorioUrl(), projetoSalvo);
+            var repositorioSalvo = repositorioRepository.save(repositorio);
 
-            var commitNovo = commitRepository.save(commitTemp);
-            branch.adicionarCommit(commitNovo);
-            autor.adicionarCommit(commitNovo);
-            var arquivos = commitExtraido.getArquivosAlterados();
-            arquivos.forEach(arquivo -> arquivo.atribuirCommit(commitNovo));
-            var arquivosAlterados = arquivoAlteradoRepository.saveAll(arquivos);
-            commitNovo.setArquivosAlterados(arquivosAlterados);
+            var commitsExtraidos = gitCommitExtractor.extrairCommitsComDiffs(
+                    diretorio,
+                    solicitacao.getBranch(),
+                    solicitacao.getDataInicio(),
+                    solicitacao.getDataFim());
 
+            var br = new Branch(solicitacao.getBranch());
+            br.setRepositorio(repositorioSalvo);
+            br.setDataUltimaAnalise(LocalDateTime.now());
+            var branch = branchRepository.save(br);
 
-            commitNovo.calcularPontuacaoFinal();
-            commitNovo.adicionarInformacoes(commitExtraido.getMensagem(),
-                    commitExtraido.getHash(),
-                    commitExtraido.getCommitDate(),
-                    commitExtraido.getComplexidadeGeral());
-            commitNovo.marcarComoMerge(commitExtraido.ehMerge());
-            commitNovo.setTipo(commitExtraido.getTipo());
+            var novosCommits = new ArrayList<Commit>();
+            for (var commitExtraido : commitsExtraidos) {
 
-            if (!codeAnalyzer.isValidCommit(commitNovo)) {
-                commitNovo.calcularPontuacaoFinal();
-                commitRepository.save(commitNovo);
-                novosCommits.add(commitNovo);
-                continue;
-            }
+                if (commitRepository.existsByHashAndRepo(commitExtraido.getHash(), solicitacao.getRepositorioUrl())) {
+                    continue;
+                }
 
-            var analises = codeAnalyzer.analyze(commitNovo);
-            if (!analises.isEmpty()) {
-                analiseCodigoRepository.saveAll(analises);
+                var commitTemp = new Commit();
+
+                var autor = obterAutor(commitExtraido);
+                commitTemp.atribuirAutor(autor);
+
+                commitTemp.atribuirBranch(branch);
+
+                var commitNovo = commitRepository.save(commitTemp);
+                branch.adicionarCommit(commitNovo);
+                autor.adicionarCommit(commitNovo);
+                var arquivos = commitExtraido.getArquivosAlterados();
+                arquivos.forEach(arquivo -> arquivo.atribuirCommit(commitNovo));
+                var arquivosAlterados = arquivoAlteradoRepository.saveAll(arquivos);
                 commitNovo.setArquivosAlterados(arquivosAlterados);
+
+
+                commitNovo.calcularPontuacaoFinal();
+                commitNovo.adicionarInformacoes(commitExtraido.getMensagem(),
+                        commitExtraido.getHash(),
+                        commitExtraido.getCommitDate(),
+                        commitExtraido.getComplexidadeGeral());
+                commitNovo.marcarComoMerge(commitExtraido.ehMerge());
+                commitNovo.setTipo(commitExtraido.getTipo());
+
+                if (!codeAnalyzer.isValidCommit(commitNovo)) {
+                    commitNovo.calcularPontuacaoFinal();
+                    commitRepository.save(commitNovo);
+                    novosCommits.add(commitNovo);
+                    continue;
+                }
+
+                var analises = codeAnalyzer.analyze(commitNovo);
+                if (!analises.isEmpty()) {
+                    analiseCodigoRepository.saveAll(analises);
+                    commitNovo.setArquivosAlterados(arquivosAlterados);
+                }
+
+                commitRepository.update(commitNovo);
+                novosCommits.add(commitNovo);
             }
 
-            commitRepository.update(commitNovo);
-            novosCommits.add(commitNovo);
+            var analiseProjeto = new AnaliseProjeto();
+            analiseProjeto.consolidar(novosCommits, solicitacao, projetoSalvo);
+            analiseProjeto.setBranch(branch);
+            analiseProjeto.setSolicitacaoAnalise(solicitacao);
+            analiseProjeto.setUsuario(projetoSalvo.getUsuario());
+            analiseProjetoRepository.save(analiseProjeto);
+
+            branch.adicionarAnalise(analiseProjeto);
+            branchRepository.save(branch);
+            solicitacao.finalizarComSucesso();
+
+            repositorio.atribuirProjeto(projetoSalvo);
+            branch.vincularRepositorio(repositorioSalvo);
+            branchRepository.save(branch);
+
+            solicitacaoRepository.save(solicitacao);
+
+            log.info("Análise concluída com sucesso para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
+
+        } catch (Exception e) {
+            log.error("Erro inesperado ao processar a solicitação de análise: {}", e.getMessage(), e);
+            var solicitacao = solicitacaoRepository.findById(command.getSolicitacaoId());
+            solicitacao.finalizarComErro("Erro inesperado: " + e.getMessage());
+            solicitacaoRepository.save(solicitacao);
+        } finally {
+            if(diretorio != null){
+                diretorio.delete();
+                log.info("Diretório temporário removido: {}", diretorio);
+            }
+            log.info("Processamento da solicitação de análise finalizado.");
         }
-
-        var analiseProjeto = new AnaliseProjeto();
-        analiseProjeto.consolidar(novosCommits, solicitacao, projetoSalvo);
-        analiseProjeto.setBranch(branch);
-        analiseProjeto.setSolicitacaoAnalise(solicitacao);
-        analiseProjeto.setUsuario(projetoSalvo.getUsuario());
-        analiseProjetoRepository.save(analiseProjeto);
-
-        branch.adicionarAnalise(analiseProjeto);
-        branchRepository.save(branch);
-        solicitacao.finalizarComSucesso();
-
-        repositorio.atribuirProjeto(projetoSalvo);
-        branch.vincularRepositorio(repositorioSalvo);
-        branchRepository.save(branch);
-
-        solicitacaoRepository.save(solicitacao);
-
-        log.info("Análise concluída com sucesso para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
-
-        diretorio.delete();
-        log.info("Diretório temporário removido: {}", diretorio);
-
-        //TODO - FICA PRA PROXIMA IMPLMENTAÇÃO
-        //notificacaoService.enviarEmailConclusao(solicitacao.getProjetoUrl());
     }
 
     private Autor obterAutor(Commit commit) {

@@ -1,11 +1,13 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.controller;
 
-import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterAnalisesProjetoQuery;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterInformacoesAnaliseQuery;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.solicitacaoAnalise.queries.ObterSolicitacoesAnaliseQuery;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,13 @@ public class AnaliseController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> fetchInfosAnalises(@PathVariable("id") Long id) {
         var command = new ObterInformacoesAnaliseQuery(id);
+        var view = mediatorHandler.enviarConsulta(command);
+        return ResponseEntity.ok(view);
+    }
+
+    @GetMapping(value = "/solicitacoes", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> fetchStatusSolicitacoes(@AuthenticationPrincipal UserDetails me) {
+        var command = new ObterSolicitacoesAnaliseQuery(me.getUsername());
         var view = mediatorHandler.enviarConsulta(command);
         return ResponseEntity.ok(view);
     }

@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +54,17 @@ public class AuthController {
         if (users.existsByEmail(email)) {
             return ResponseEntity.badRequest().body("E-mail já cadastrado");
         }
+
         var user = new User(req.name(), email, encoder.encode(req.password()), Set.of(Role.USER));
         users.save(user);
-        return ResponseEntity.ok().build();
+
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, req.password())
+        );
+
+        String subject = authentication.getName();
+        String token = jwt.generateToken(subject, Map.of("scope", "api"));
+
+        return ResponseEntity.ok(LoginResponse.bearer(token));
     }
 }
