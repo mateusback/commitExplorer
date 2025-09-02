@@ -4,6 +4,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.comman
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.commands.ProcessarSolicitacaoCommand;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AnalisarRepositorioView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.SolicitacaoAnaliseExecutor;
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.repository.UserRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.CommandHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.security.EncryptionService;
@@ -22,15 +23,18 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
     private final EncryptionService encryptionService;
     private final SolicitacaoAnaliseRepository solicitacaoAnaliseRepository;
     private final SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor;
+    private final UserRepository userRepository;
 
     public AnalisarRepositorioCommandHandler(
             EncryptionService encryptionService,
             SolicitacaoAnaliseRepository solicitacaoAnaliseRepository,
-            SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor
+            SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor,
+            UserRepository userRepository
     ) {
         this.encryptionService = encryptionService;
         this.solicitacaoAnaliseRepository = solicitacaoAnaliseRepository;
         this.solicitacaoAnaliseExecutor = solicitacaoAnaliseExecutor;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -38,15 +42,43 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
         var repositoriosParaAnalisar = 0;
         log.info("Nova solicitação de análise de repositórios recebida");
 
+        var usuario = userRepository.findByEmail(command.getRequestedByEmail()).orElseThrow(() -> {
+            log.error("Usuário com email {} não encontrado", command.getRequestedByEmail());
+            return new IllegalArgumentException("Usuário não encontrado");
+        });
+
+        var janelaRecente = LocalDateTime.now().minusHours(4);
+        var dataInicioDefault = command.getStartDate() != null ? command.getStartDate() : LocalDate.now().minusMonths(3);
+        var dataFimDefault = command.getEndDate() != null ? command.getEndDate() : LocalDate.now();
+
         for (var repositorio : command.getRepositorios()) {
-            var analiseJaRealizada = solicitacaoAnaliseRepository.existsRecentByRepositorioUrlAndBranch(
+            boolean analiseJaRealizada = solicitacaoAnaliseRepository.existsRecentByRepositorioUrlAndBranch(
                     repositorio.getRepoUrl(),
                     repositorio.getBranch(),
-                    LocalDateTime.now().minusHours(4)
+                    janelaRecente
             );
 
-            if (analiseJaRealizada)
+            if (analiseJaRealizada) {
+                var solicitacaoFalha = new SolicitacaoAnalise();
+                solicitacaoFalha.registrarNovaSolicitacao(
+                        repositorio.getRepoUrl(),
+                        repositorio.getBranch(),
+                        command.getProjectUrl(),
+                        null,
+                        dataInicioDefault,
+                        dataFimDefault
+                );
+                solicitacaoFalha.setNomeProjeto(command.getProjectName());
+                solicitacaoFalha.setUsuario(usuario);
+                solicitacaoFalha.finalizarComErro(
+                        "Já existe uma análise recente para esse repositório/branch."
+                );
+                solicitacaoAnaliseRepository.save(solicitacaoFalha);
+
+                log.info("Solicitação marcada como FALHA por análise recente: {}/{}",
+                        repositorio.getRepoUrl(), repositorio.getBranch());
                 continue;
+            }
 
             repositoriosParaAnalisar++;
 
@@ -63,6 +95,7 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
                     dataFim
             );
             solicitacao.setNomeProjeto(command.getProjectName());
+            solicitacao.setUsuario(usuario);
             var entity = solicitacaoAnaliseRepository.save(solicitacao);
             var processarCommand = new ProcessarSolicitacaoCommand(entity.getIdSolicitacaoAnalise());
             log.info("Enviando comando para processar solicitação de análise: {}", entity.getIdSolicitacaoAnalise());

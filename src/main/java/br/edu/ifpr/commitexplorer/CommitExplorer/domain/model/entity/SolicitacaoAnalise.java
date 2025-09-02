@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.model.User;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.StatusSolicitacao;
 
 import java.time.LocalDate;
@@ -20,6 +21,8 @@ public class SolicitacaoAnalise {
     private String token;
     private StatusSolicitacao status;
     private String mensagemErro;
+
+    private User usuario;
 
     public SolicitacaoAnalise() {
         this.status = StatusSolicitacao.PENDENTE;
@@ -106,6 +109,9 @@ public class SolicitacaoAnalise {
     public String getNomeProjeto() {
         return nomeProjeto;
     }
+    public User getUsuario() {
+        return usuario;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -147,6 +153,9 @@ public class SolicitacaoAnalise {
     }
     public void setNomeProjeto(String nomeProjeto) {
         this.nomeProjeto = nomeProjeto;
+    }
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
     }
     // </editor-fold>
 }

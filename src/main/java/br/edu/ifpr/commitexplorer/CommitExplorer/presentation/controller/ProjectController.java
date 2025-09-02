@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,8 +40,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ObterProjetosView> getProjects() {
-        var view = mediatorHandler.enviarConsulta(new ObterProjetosQuery());
+    public ResponseEntity<ObterProjetosView> getProjects(@AuthenticationPrincipal UserDetails me) {
+        var view = mediatorHandler.enviarConsulta(new ObterProjetosQuery(me.getUsername()));
         return ResponseEntity.ok(view);
     }
 

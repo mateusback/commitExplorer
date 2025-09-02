@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.model.User;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.StatusSolicitacao;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -36,4 +37,8 @@ public class SolicitacaoAnaliseEntity {
     private StatusSolicitacao status;
 
     private String mensagemErro;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private User usuario;
 }

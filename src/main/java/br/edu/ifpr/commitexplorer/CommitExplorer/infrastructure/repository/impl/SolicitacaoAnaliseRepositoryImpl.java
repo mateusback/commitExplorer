@@ -8,6 +8,8 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.inter
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Component
 public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepository {
 
@@ -41,5 +43,12 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
         return jpaRepository.existsByRepositorioUrlAndBranchAndDataSolicitacaoAfter(
                 repositorioUrl, branch, threshold
         );
+    }
+
+    @Override
+    public List<SolicitacaoAnalise> obterSolicitacoesAnalisePorSolicitante(long userId) {
+        return jpaRepository.findByUsuarioId(userId).stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }

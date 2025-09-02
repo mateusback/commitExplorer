@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseProjetoRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ObterAnalisesQueryHandler implements QueryHandler<ObterAnalisesQuery, ObterAnalisesView> {
@@ -16,6 +17,7 @@ public class ObterAnalisesQueryHandler implements QueryHandler<ObterAnalisesQuer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ObterAnalisesView handle(ObterAnalisesQuery command) {
         var analises = analiseProjetoRepository.findAll();
         return new ObterAnalisesView(analises);

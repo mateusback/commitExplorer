@@ -8,4 +8,6 @@ public interface ProjetoRepository {
     Projeto save(Projeto projeto);
     List<Projeto> findAll();
     Projeto findById(Long id);
+
+    List<Projeto> findAllByOwnerId(Long ownerId);
 }

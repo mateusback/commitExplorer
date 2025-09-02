@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.model.User;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoAnalise;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class AnaliseProjeto {
     private Projeto projeto;
     private Branch branch;
     private SolicitacaoAnalise solicitacaoAnalise;
+    private User usuario;
 
     void vincularSolicitacao(SolicitacaoAnalise solicitacao) {
         this.solicitacaoAnalise = solicitacao;
@@ -110,6 +112,9 @@ public class AnaliseProjeto {
     public SolicitacaoAnalise getSolicitacaoAnalise() {
         return solicitacaoAnalise;
     }
+    public User getUsuario() {
+        return usuario;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -148,6 +153,9 @@ public class AnaliseProjeto {
     }
     public void setSolicitacaoAnalise(SolicitacaoAnalise solicitacaoAnalise) {
         this.solicitacaoAnalise = solicitacaoAnalise;
+    }
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
     }
     // </editor-fold>
 }

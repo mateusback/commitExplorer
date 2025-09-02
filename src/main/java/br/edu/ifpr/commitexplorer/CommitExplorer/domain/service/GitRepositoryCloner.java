@@ -1,7 +1,8 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.domain.service;
 
-import java.io.File;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.SolicitacaoAnalise;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.externalService.git.results.CloneResult;
 
 public interface GitRepositoryCloner {
-    File clone(String repoUrl, String branch, String token);
+    CloneResult clone(SolicitacaoAnalise solicitacaoAnalise);
 }

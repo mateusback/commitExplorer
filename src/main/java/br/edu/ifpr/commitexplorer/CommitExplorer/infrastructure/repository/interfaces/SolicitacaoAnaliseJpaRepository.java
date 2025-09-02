@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SolicitacaoAnaliseJpaRepository extends JpaRepository<SolicitacaoAnaliseEntity, Long> {
     boolean existsByRepositorioUrlAndBranchAndDataSolicitacaoAfter(
             String repositorioUrl, String branch, LocalDateTime dataSolicitacao);
 
+    List<SolicitacaoAnaliseEntity> findByUsuarioId(long userId);
 }

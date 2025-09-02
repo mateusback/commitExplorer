@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,4 +36,8 @@ public class AnaliseProjetoEntity {
     @OneToOne
     @JoinColumn(name = "id_solicitacao_analise")
     private SolicitacaoAnaliseEntity solicitacaoAnalise;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private User usuario;
 }

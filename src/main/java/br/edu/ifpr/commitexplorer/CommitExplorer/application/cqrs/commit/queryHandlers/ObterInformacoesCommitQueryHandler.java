@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.CommitRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ObterInformacoesCommitQueryHandler implements QueryHandler<ObterInformacoesCommitQuery, InformacoesCommitView> {
@@ -17,6 +18,7 @@ public class ObterInformacoesCommitQueryHandler implements QueryHandler<ObterInf
     }
 
     @Override
+    @Transactional(readOnly = true)
     public InformacoesCommitView handle(ObterInformacoesCommitQuery query) {
 
         var commit = commitRepository.obterInformacoesCommit(query.getIdCommit());

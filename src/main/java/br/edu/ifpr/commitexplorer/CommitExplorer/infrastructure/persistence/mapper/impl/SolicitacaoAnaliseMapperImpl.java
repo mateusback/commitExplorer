@@ -23,6 +23,7 @@ public class SolicitacaoAnaliseMapperImpl implements SolicitacaoAnaliseMapper {
         entity.setProjetoUrl(domain.getProjetoUrl());
         entity.setToken(domain.getToken());
         entity.setNomeProjeto(domain.getNomeProjeto());
+        entity.setUsuario(domain.getUsuario());
 
         return entity;
     }
@@ -47,6 +48,7 @@ public class SolicitacaoAnaliseMapperImpl implements SolicitacaoAnaliseMapper {
         solicitacaoAnalise.setProjetoUrl(entity.getProjetoUrl());
         solicitacaoAnalise.setToken(entity.getToken());
         solicitacaoAnalise.setNomeProjeto(entity.getNomeProjeto());
+        solicitacaoAnalise.setUsuario(entity.getUsuario());
 
         return solicitacaoAnalise;
     }
