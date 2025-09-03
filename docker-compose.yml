@@ -3,10 +3,8 @@ version: "3.9"
 services:
   db:
     image: postgres:16
-    environment:
-      POSTGRES_DB: commit_explorer
-      POSTGRES_USER: explorer
-      POSTGRES_PASSWORD: supersecret
+    env_file:
+      - db.env
     volumes:
       - db_data:/var/lib/postgresql/data
     networks: [appnet]
