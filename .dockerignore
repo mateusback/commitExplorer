@@ -1,0 +1,25 @@
+# Maven
+target
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/MavenWrapperDownloader.java
+
+# IDEs e configs locais
+.idea
+*.iml
+.vscode
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# Logs
+*.log
+
+# Outros
+*.class
+*.jar
+.DS_Store
+.env
