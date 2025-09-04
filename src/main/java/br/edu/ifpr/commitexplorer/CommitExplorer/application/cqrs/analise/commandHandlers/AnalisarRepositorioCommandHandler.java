@@ -47,39 +47,7 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
             return new IllegalArgumentException("Usuário não encontrado");
         });
 
-        var janelaRecente = LocalDateTime.now().minusHours(4);
-        var dataInicioDefault = command.getStartDate() != null ? command.getStartDate() : LocalDate.now().minusMonths(3);
-        var dataFimDefault = command.getEndDate() != null ? command.getEndDate() : LocalDate.now();
-
         for (var repositorio : command.getRepositorios()) {
-            boolean analiseJaRealizada = solicitacaoAnaliseRepository.existsRecentByRepositorioUrlAndBranch(
-                    repositorio.getRepoUrl(),
-                    repositorio.getBranch(),
-                    janelaRecente
-            );
-
-            if (analiseJaRealizada) {
-                var solicitacaoFalha = new SolicitacaoAnalise();
-                solicitacaoFalha.registrarNovaSolicitacao(
-                        repositorio.getRepoUrl(),
-                        repositorio.getBranch(),
-                        command.getProjectUrl(),
-                        null,
-                        dataInicioDefault,
-                        dataFimDefault
-                );
-                solicitacaoFalha.setNomeProjeto(command.getProjectName());
-                solicitacaoFalha.setUsuario(usuario);
-                solicitacaoFalha.finalizarComErro(
-                        "Já existe uma análise recente para esse repositório/branch."
-                );
-                solicitacaoAnaliseRepository.save(solicitacaoFalha);
-
-                log.info("Solicitação marcada como FALHA por análise recente: {}/{}",
-                        repositorio.getRepoUrl(), repositorio.getBranch());
-                continue;
-            }
-
             repositoriosParaAnalisar++;
 
             var encryptedToken = encryptionService.encrypt(command.getAccessToken());

@@ -102,6 +102,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
 
                 if (commitRepository.existsByHashAndRepo(commitExtraido.getHash(), solicitacao.getRepositorioUrl())) {
                     continue;
+                    //Colocar lógica aqui para chamar o commit nessa analise
                 }
 
                 var commitTemp = new Commit();
@@ -112,8 +113,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 commitTemp.atribuirBranch(branch);
 
                 var commitNovo = commitRepository.save(commitTemp);
-                branch.adicionarCommit(commitNovo);
-                autor.adicionarCommit(commitNovo);
                 var arquivos = commitExtraido.getArquivosAlterados();
                 arquivos.forEach(arquivo -> arquivo.atribuirCommit(commitNovo));
                 var arquivosAlterados = arquivoAlteradoRepository.saveAll(arquivos);
