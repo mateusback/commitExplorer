@@ -25,6 +25,7 @@ public class CommitEntity {
     private Float pontuacao;
     private Integer complexidadeGeral;
     private boolean ehMerge;
+    private boolean analisado;
 
     @Enumerated(EnumType.STRING)
     private TipoCommit tipo;

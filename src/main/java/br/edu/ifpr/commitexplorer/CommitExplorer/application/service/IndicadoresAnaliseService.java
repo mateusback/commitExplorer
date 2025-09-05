@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Component
 public class IndicadoresAnaliseService {
 
-    public IndicadoresAnalise calcular(List<Commit> commits, LocalDate ini, LocalDate fim) {
+    public IndicadoresAnalise calcular(List<Commit> commits, LocalDate ini, LocalDate fim, boolean temCommitsAnalisados) {
         var m = new IndicadoresAnalise();
 
         m.setDiasPeriodo(Math.max(1, ChronoUnit.DAYS.between(ini, fim) + 1));
@@ -71,14 +71,6 @@ public class IndicadoresAnaliseService {
         m.setSmellsTotal(smells);
         m.setSmellsPorKLocAlteradas(m.getLinhasAlteradasTotal() == 0 ? 0.0 : (smells * 1000.0) / m.getLinhasAlteradasTotal());
 
-        // Complexidade (usa campo do Commit)
-        double complexidadeMedia = commits.stream()
-                .map(Commit::getComplexidadeGeral)
-                .filter(Objects::nonNull)
-                .mapToInt(Integer::intValue)
-                .average().orElse(0.0);
-        m.setComplexidadeMedia(complexidadeMedia);
-
         // Hotspots: share Top 5
         var top5 = linhasPorArquivo.values().stream()
                 .sorted(Comparator.reverseOrder())
@@ -87,6 +79,21 @@ public class IndicadoresAnaliseService {
                 .sum();
         int totalPorArquivo = linhasPorArquivo.values().stream().mapToInt(Integer::intValue).sum();
         m.setShareTop5Arquivos(totalPorArquivo == 0 ? 0.0 : (double) top5 / totalPorArquivo);
+
+        // Complexidade (usa campo do Commit)
+        if (temCommitsAnalisados) {
+            m.setTemCommitsAnalisados(true);
+        } else {
+            m.setTemCommitsAnalisados(false);
+            return m;
+        }
+
+        double complexidadeMedia = commits.stream()
+                .map(Commit::getComplexidadeGeral)
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .average().orElse(0.0);
+        m.setComplexidadeMedia(complexidadeMedia);
 
         return m;
     }

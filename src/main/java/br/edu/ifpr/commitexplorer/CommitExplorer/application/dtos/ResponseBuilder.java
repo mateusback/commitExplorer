@@ -1,11 +1,9 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class ResponseBuilder {
-
 
      //2xx
     public static <T> BaseResponse<T> success(T data) {

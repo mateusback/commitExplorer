@@ -81,12 +81,14 @@ public class RepositorioMapperImpl implements RepositorioMapper {
         entity.setIdRepositorio(domain.getIdRepositorio());
         entity.setNome(domain.getNome());
         entity.setUrlRepo(domain.getUrlRepo());
+        entity.setAnalisado(domain.isAnalisado());
         return entity;
     }
 
     private Repositorio baseDomain(RepositorioEntity entity) {
         var domain = new Repositorio(entity.getNome(), entity.getUrlRepo(), projetoMapper.toDomainId(entity.getProjeto()));
         domain.setIdRepositorio(entity.getIdRepositorio());
+        domain.setAnalisado(entity.isAnalisado());
         return domain;
     }
 }

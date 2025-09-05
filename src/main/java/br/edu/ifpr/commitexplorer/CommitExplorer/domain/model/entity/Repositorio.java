@@ -8,6 +8,7 @@ public class Repositorio {
     private String urlRepo;
     private Projeto projeto;
     private List<Branch> branches;
+    private boolean analisado;
 
     public Repositorio(String nome, String urlRepo, Projeto projeto) {
         this.nome = nome;
@@ -43,6 +44,9 @@ public class Repositorio {
     public List<Branch> getBranches() {
         return branches;
     }
+    public boolean isAnalisado() {
+        return analisado;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -60,6 +64,9 @@ public class Repositorio {
     }
     public void setBranches(List<Branch> branches) {
         this.branches = branches;
+    }
+    public void setAnalisado(boolean analisado) {
+        this.analisado = analisado;
     }
     // </editor-fold>
 }

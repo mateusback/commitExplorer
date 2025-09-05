@@ -56,11 +56,12 @@ public class ObterInformacoesAnaliseQueryHandler
         var porAutorView = autoresViews.stream()
                 .collect(Collectors.toMap(AutorResumoView::getIdAutor, Function.identity(), (a,b)->a, LinkedHashMap::new));
 
-
         var inicio = analise.getSolicitacaoAnalise().getDataInicio();
         var fim    = analise.getSolicitacaoAnalise().getDataFim();
 
-        var indicadores = indicadoresAnaliseService.calcular(commitsNoPeriodo, inicio, fim);
+        var temCommitsAnalisados = commitsNoPeriodo.stream().anyMatch(Commit::isAnalisado);
+
+        var indicadores = indicadoresAnaliseService.calcular(commitsNoPeriodo, inicio, fim, temCommitsAnalisados);
         
         var feedback = pontuacaoAnaliseService.gerarFeedbackAcademico(commitsNoPeriodo, inicio, fim, indicadores);
 
@@ -68,7 +69,15 @@ public class ObterInformacoesAnaliseQueryHandler
         out.setGeral(geral);
         out.setAutores(autoresViews);
         out.setPorAutor(porAutorView);
-        out.setFeedback(feedback);
+
+        var feedbackDinamico = new FeedbackDinamicoView();
+        feedbackDinamico.setPontosNegativos(feedbackDinamico.getPontosNegativos());
+        feedbackDinamico.setPontosPositivos(feedbackDinamico.getPontosPositivos());
+        feedbackDinamico.setNota(feedback.getNota());
+        feedbackDinamico.setSugestoes(feedback.getSugestoes());
+        feedbackDinamico.setFeedback(feedback.getFeedback());
+
+        out.setFeedback(feedbackDinamico);
         return out;
     }
 

@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.impl;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.model.User;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.SolicitacaoAnalise;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.SolicitacaoAnaliseRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.SolicitacaoAnaliseEntity;

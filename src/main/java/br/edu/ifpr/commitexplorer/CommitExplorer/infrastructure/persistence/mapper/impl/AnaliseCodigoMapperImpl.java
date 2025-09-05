@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class AnaliseCodigoMapperImpl implements AnaliseCodigoMapper {
 
-    private ArquivoAlteradoMapper arquivoAlteradoMapper;
+    private final ArquivoAlteradoMapper arquivoAlteradoMapper;
 
     public AnaliseCodigoMapperImpl(ArquivoAlteradoMapper arquivoAlteradoMapper) {
         this.arquivoAlteradoMapper = arquivoAlteradoMapper;

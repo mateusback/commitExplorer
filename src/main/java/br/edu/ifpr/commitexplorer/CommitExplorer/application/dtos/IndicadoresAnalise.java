@@ -25,6 +25,7 @@ public class IndicadoresAnalise {
     private double linhasPorCommit;
 
     // Qualidade
+    private boolean temCommitsAnalisados;
     private int smellsTotal;
     private double smellsPorKLocAlteradas;
 

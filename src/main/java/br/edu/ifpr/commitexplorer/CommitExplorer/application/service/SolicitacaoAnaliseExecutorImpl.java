@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.*;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.*;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.CodeAnalyzerService;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.service.GitRepositoryCloner;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 @Slf4j
 @Component
+@AllArgsConstructor
 public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecutor {
 
     private final CodeAnalyzerService codeAnalyzer;
@@ -29,36 +31,13 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     private final ProjetoRepository projetoRepository;
     private final RepositorioRepository repositorioRepository;
     private final AnaliseProjetoRepository analiseProjetoRepository;
-
-    public SolicitacaoAnaliseExecutorImpl(CodeAnalyzerService codeAnalyzer,
-                                          SolicitacaoAnaliseRepository solicitacaoRepository,
-                                          GitRepositoryCloner gitRepositoryCloner,
-                                          GitCommitExtractor gitCommitExtractor,
-                                          CommitRepository commitRepository,
-                                          AutorRepository autorRepository,
-                                          AnaliseCodigoRepository analiseCodigoRepository,
-                                          ArquivoAlteradoRepository arquivoAlteradoRepository,
-                                          BranchRepository branchRepository,
-                                          ProjetoRepository projetoRepository,
-                                          RepositorioRepository repositorioRepository, AnaliseProjetoRepository analiseProjetoRepository) {
-        this.codeAnalyzer = codeAnalyzer;
-        this.solicitacaoRepository = solicitacaoRepository;
-        this.gitRepositoryCloner = gitRepositoryCloner;
-        this.gitCommitExtractor = gitCommitExtractor;
-        this.commitRepository = commitRepository;
-        this.autorRepository = autorRepository;
-        this.analiseCodigoRepository = analiseCodigoRepository;
-        this.arquivoAlteradoRepository = arquivoAlteradoRepository;
-        this.branchRepository = branchRepository;
-        this.projetoRepository = projetoRepository;
-        this.repositorioRepository = repositorioRepository;
-        this.analiseProjetoRepository = analiseProjetoRepository;
-    }
+    private final FeedbackAnaliseService feedbackAnaliseService;
 
     @Async
     @Transactional
     public void processar(ProcessarSolicitacaoCommand command) {
         var diretorio = (java.io.File) null;
+        var horarioInicio = LocalDateTime.now();
 
         try {
             var solicitacao = solicitacaoRepository.findById(command.getSolicitacaoId());
@@ -102,7 +81,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
 
                 if (commitRepository.existsByHashAndRepo(commitExtraido.getHash(), solicitacao.getRepositorioUrl())) {
                     continue;
-                    //Colocar lógica aqui para chamar o commit nessa analise
+                    //TODO - Colocar lógica aqui para chamar o commit nessa analise
                 }
 
                 var commitTemp = new Commit();
@@ -128,6 +107,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 commitNovo.setTipo(commitExtraido.getTipo());
 
                 if (!codeAnalyzer.isValidCommit(commitNovo)) {
+                    commitNovo.setAnalisado(false);
                     commitNovo.calcularPontuacaoFinal();
                     commitRepository.save(commitNovo);
                     novosCommits.add(commitNovo);
@@ -137,6 +117,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
                 var analises = codeAnalyzer.analyze(commitNovo);
                 if (!analises.isEmpty()) {
                     analiseCodigoRepository.saveAll(analises);
+                    commitNovo.setAnalisado(true);
                     commitNovo.setArquivosAlterados(arquivosAlterados);
                 }
 
@@ -145,21 +126,27 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
             }
 
             var analiseProjeto = new AnaliseProjeto();
+            analiseProjeto.definirTempoAnalise(horarioInicio, LocalDateTime.now());
             analiseProjeto.consolidar(novosCommits, solicitacao, projetoSalvo);
             analiseProjeto.setBranch(branch);
             analiseProjeto.setSolicitacaoAnalise(solicitacao);
-            analiseProjeto.setUsuario(projetoSalvo.getUsuario());
-            analiseProjetoRepository.save(analiseProjeto);
-
-            branch.adicionarAnalise(analiseProjeto);
+            analiseProjeto.setUsuario(solicitacao.getUsuario());
+            var analiseSalva = analiseProjetoRepository.save(analiseProjeto);
+            branch.adicionarAnalise(analiseSalva);
             branchRepository.save(branch);
-            solicitacao.finalizarComSucesso();
 
-            repositorio.atribuirProjeto(projetoSalvo);
+            branch.setCommits(novosCommits);
+            analiseSalva.setBranch(branch);
+
+            solicitacao.finalizarComSucesso();
             branch.vincularRepositorio(repositorioSalvo);
             branchRepository.save(branch);
 
+            repositorioSalvo.setAnalisado(novosCommits.stream().anyMatch(Commit::isAnalisado));
+            repositorioRepository.save(repositorioSalvo);
             solicitacaoRepository.save(solicitacao);
+
+            feedbackAnaliseService.calcularFeedback(analiseSalva);
 
             log.info("Análise concluída com sucesso para a solicitação: {}", solicitacao.getIdSolicitacaoAnalise());
 

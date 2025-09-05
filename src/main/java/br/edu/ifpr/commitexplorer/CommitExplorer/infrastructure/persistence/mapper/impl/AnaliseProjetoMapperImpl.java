@@ -2,10 +2,7 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.map
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProjeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AnaliseProjetoEntity;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ProjetoMapper;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.SolicitacaoAnaliseMapper;
+import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +14,16 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
     private final ProjetoMapper projetoMapper;
     private final BranchMapper branchMapper;
     private final SolicitacaoAnaliseMapper solicitacaoAnaliseMapper;
+    private final FeedbackAnaliseMapper feedbackAnaliseMapper;
 
     public AnaliseProjetoMapperImpl(@Lazy ProjetoMapper projetoMapper,
                                     @Lazy BranchMapper branchMapper,
-                                    SolicitacaoAnaliseMapper solicitacaoAnaliseMapper) {
+                                    SolicitacaoAnaliseMapper solicitacaoAnaliseMapper,
+                                    @Lazy FeedbackAnaliseMapper feedbackAnaliseMapper) {
         this.projetoMapper = projetoMapper;
         this.branchMapper = branchMapper;
         this.solicitacaoAnaliseMapper = solicitacaoAnaliseMapper;
+        this.feedbackAnaliseMapper = feedbackAnaliseMapper;
     }
 
     @Override
@@ -37,6 +37,9 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         }
         if (domain.getSolicitacaoAnalise() != null) {
             entity.setSolicitacaoAnalise(solicitacaoAnaliseMapper.toEntity(domain.getSolicitacaoAnalise()));
+        }
+        if (domain.getFeedbacks() != null) {
+            entity.setFeedbacks(feedbackAnaliseMapper.toEntity(domain.getFeedbacks()));
         }
         return entity;
     }
@@ -67,6 +70,9 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         if (entity.getSolicitacaoAnalise() != null) {
             domain.setSolicitacaoAnalise(solicitacaoAnaliseMapper.toDomain(entity.getSolicitacaoAnalise()));
         }
+        if (entity.getFeedbacks() != null) {
+            domain.setFeedbacks(feedbackAnaliseMapper.toDomain(entity.getFeedbacks()));
+        }
         return domain;
     }
 
@@ -95,6 +101,7 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         entity.setTotalCommits(domain.getTotalCommits());
         entity.setTotalAutores(domain.getTotalAutores());
         entity.setTempoAnalise(domain.getTempoAnalise());
+        entity.setUsuario(domain.getUsuario());
         return entity;
     }
 
@@ -109,6 +116,7 @@ public class AnaliseProjetoMapperImpl implements AnaliseProjetoMapper {
         domain.setTotalCommits(entity.getTotalCommits());
         domain.setTotalAutores(entity.getTotalAutores());
         domain.setTempoAnalise(entity.getTempoAnalise());
+        domain.setUsuario(entity.getUsuario());
         return domain;
     }
 

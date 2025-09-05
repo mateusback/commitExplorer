@@ -21,6 +21,7 @@ public class AnaliseProjeto {
     private Branch branch;
     private SolicitacaoAnalise solicitacaoAnalise;
     private User usuario;
+    private List<FeedbackAnalise> feedbacks;
 
     void vincularSolicitacao(SolicitacaoAnalise solicitacao) {
         this.solicitacaoAnalise = solicitacao;
@@ -38,12 +39,16 @@ public class AnaliseProjeto {
     public void consolidar(List<Commit> commits, SolicitacaoAnalise solicitacao, Projeto projeto) {
         this.projeto = projeto;
         this.vincularSolicitacao(solicitacao);
-
+        this.statusAnalise = 1;
         this.totalCommits = commits.size();
         this.totalAutores = calcularTotalAutores(commits);
         this.quantidadeCodeSmells = calcularTotalCodeSmells(commits);
         this.complexidadeMedia = calcularMediaComplexidade(commits);
         this.pontuacaoTotal = calcularPontuacaoTotal(commits);
+    }
+
+    public void definirTempoAnalise(LocalDateTime inicio, LocalDateTime fim) {
+        this.tempoAnalise = (java.time.Duration.between(inicio, fim).toMillis()) / 1000.0;
     }
 
     private int calcularTotalAutores(List<Commit> commits) {
@@ -115,6 +120,9 @@ public class AnaliseProjeto {
     public User getUsuario() {
         return usuario;
     }
+    public List<FeedbackAnalise> getFeedbacks() {
+        return feedbacks;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -156,6 +164,9 @@ public class AnaliseProjeto {
     }
     public void setUsuario(User usuario) {
         this.usuario = usuario;
+    }
+    public void setFeedbacks(List<FeedbackAnalise> feedbacks) {
+        this.feedbacks = feedbacks;
     }
     // </editor-fold>
 }
