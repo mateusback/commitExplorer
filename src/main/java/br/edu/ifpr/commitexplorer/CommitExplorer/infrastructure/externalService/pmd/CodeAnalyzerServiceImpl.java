@@ -1,5 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.externalService.pmd;
 
+import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.util.CyclomaticComplexityCalculator;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.util.PMDExecutor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseCodigo;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.ArquivoAlterado;
@@ -31,6 +32,7 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
 
         List<AnaliseCodigo> resultado = new ArrayList<>();
         List<Float> pontuacoesArquivos = new ArrayList<>();
+        List<Double> complexidadesArquivos = new ArrayList<>();
 
         for (ArquivoAlterado arquivo : commit.getArquivosAlterados()) {
             String nome = arquivo.getNomeArquivo();
@@ -43,6 +45,10 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
             try {
                 var report = PMDExecutor.analyzeFile(nome, content);
                 var violations = report.getViolations();
+
+                var complexityResult = CyclomaticComplexityCalculator.calculateComplexity(nome, content);
+                double complexidadeMedia = complexityResult.getAverageComplexity();
+                complexidadesArquivos.add(complexidadeMedia);
 
                 if (violations.isEmpty()) {
                     AnaliseCodigo analiseOk = new AnaliseCodigo();
@@ -77,12 +83,27 @@ public class CodeAnalyzerServiceImpl implements CodeAnalyzerService {
 
             } catch (Exception e) {
                 log.warn("Erro ao analisar arquivo {} no commit {}", nome, commit.getHash(), e);
+                complexidadesArquivos.add(1.0);
             }
         }
 
         if (!pontuacoesArquivos.isEmpty()) {
             float media = (float) pontuacoesArquivos.stream().mapToDouble(Float::doubleValue).average().orElse(100.0);
             commit.setPontuacao(media);
+        }
+
+        if (!complexidadesArquivos.isEmpty()) {
+            double complexidadeMedia = complexidadesArquivos.stream()
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(1.0);
+            
+            int complexidadeGeral = (int) Math.round(complexidadeMedia);
+            commit.setComplexidadeGeral(complexidadeGeral);
+            
+            log.debug("Complexidade ciclomática calculada para commit {}: {}", commit.getHash(), complexidadeGeral);
+        } else {
+            commit.setComplexidadeGeral(1);
         }
 
         return resultado;

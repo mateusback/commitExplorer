@@ -69,15 +69,20 @@ public class AnaliseProjeto {
 
     private double calcularMediaComplexidade(List<Commit> commits) {
         return commits.stream()
+                .map(Commit::getComplexidadeGeral)
+                .filter(Objects::nonNull)
+                .mapToDouble(Integer::doubleValue)
+                .average()
+                .orElse(1.0);
+    }
+
+    private double calcularPontuacaoTotal(List<Commit> commits) {
+        return commits.stream()
                 .map(Commit::getPontuacao)
                 .filter(Objects::nonNull)
                 .mapToDouble(Float::doubleValue)
                 .average()
                 .orElse(100.0);
-    }
-
-    private double calcularPontuacaoTotal(List<Commit> commits) {
-        return calcularMediaComplexidade(commits);
     }
 
     // <editor-fold desc="Getters">
