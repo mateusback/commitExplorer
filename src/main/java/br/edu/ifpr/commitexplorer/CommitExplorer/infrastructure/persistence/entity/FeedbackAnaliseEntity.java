@@ -38,10 +38,14 @@ public class FeedbackAnaliseEntity {
     private double pontuacaoVariedadeTipos;
     private double pontuacaoDistribuicaoTrabalho;
     private double pontuacaoDistribuicaoTemporal;
-    private double pontuacaoQualidadeTecnica;
+
+    @Column(nullable = true)
+    private Double pontuacaoQualidadeTecnica;
 
     private char conceito;
     private LocalDateTime dataCriacao;
+
+    private String AlgoritmoGeracao = "v1.0";
 
     @Column(columnDefinition = "TEXT")
     private String resumo;

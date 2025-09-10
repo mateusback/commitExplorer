@@ -17,5 +17,5 @@ public class FeedbackDto {
     double pontuacaoVariedadeTipos;
     double pontuacaoDistribuicaoTrabalho;
     double pontuacaoDistribuicaoTemporal;
-    double pontuacaoQualidadeTecnica;
+    Double pontuacaoQualidadeTecnica;
 }

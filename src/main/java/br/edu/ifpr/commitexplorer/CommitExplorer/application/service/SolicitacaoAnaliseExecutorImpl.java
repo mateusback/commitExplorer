@@ -156,7 +156,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
             solicitacao.finalizarComErro("Erro inesperado: " + e.getMessage());
             solicitacaoRepository.save(solicitacao);
         } finally {
-            if(diretorio != null){
+            if (diretorio != null) {
                 diretorio.delete();
                 log.info("Diretório temporário removido: {}", diretorio);
             }
@@ -165,12 +165,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     }
 
     private Autor obterAutor(Commit commit) {
-        Autor autor = autorRepository.buscarPorEmail(commit.getAutor().getEmail());
-        if (autor == null) {
-            autor = new Autor(commit.getAutor().getNome(), commit.getAutor().getEmail());
-            autor = autorRepository.save(autor);
-        }
-        return autor;
+        return autorRepository.buscarOuCriarPorEmail(commit.getAutor().getNome(), commit.getAutor().getEmail());
     }
-
 }

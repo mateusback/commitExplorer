@@ -65,6 +65,11 @@ public class FeedbackAnaliseMapperImpl implements FeedbackAnaliseMapper {
         if (domain.getIndicadores() != null) {
             entity.setIndicadores(indicadoresMapper.toEntity(domain.getIndicadores()));
         }
+
+        entity.setPontosPositivos(mapStringsToPontos(entity, domain.getPontosPositivos(), TipoPontoAnalise.POSITIVO));
+        entity.setPontosNegativos(mapStringsToPontos(entity, domain.getPontosNegativos(), TipoPontoAnalise.NEGATIVO));
+        entity.setSugestoesMelhoria(mapStringsToPontos(entity, domain.getSugestoesMelhoria(), TipoPontoAnalise.SUGESTAO_MELHORIA));
+
         return entity;
     }
 
@@ -101,7 +106,22 @@ public class FeedbackAnaliseMapperImpl implements FeedbackAnaliseMapper {
 
     @Override
     public FeedbackAnalise toDomainId(FeedbackAnaliseEntity entity) {
-        return baseDomain(entity);
+        var domain = baseDomain(entity);
+        if (entity.getAnalise() != null) {
+            domain.setAnaliseProjeto(analiseProjetoMapper.toDomainId(entity.getAnalise()));
+        }
+        if (entity.getAutor() != null) {
+            domain.setAutor(autorMapper.toDomainId(entity.getAutor()));
+        }
+        if (entity.getIndicadores() != null) {
+            domain.setIndicadores(indicadoresMapper.toDomain(entity.getIndicadores()));
+        }
+
+        domain.setPontosPositivos(mapPontosToStrings(entity.getPontosPositivos(), TipoPontoAnalise.POSITIVO));
+        domain.setPontosNegativos(mapPontosToStrings(entity.getPontosNegativos(), TipoPontoAnalise.NEGATIVO));
+        domain.setSugestoesMelhoria(mapPontosToStrings(entity.getSugestoesMelhoria(), TipoPontoAnalise.SUGESTAO_MELHORIA));
+
+        return domain;
     }
 
     @Override

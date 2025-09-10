@@ -18,7 +18,7 @@ public class FeedbackAnalise {
     private double pontuacaoVariedadeTipos;
     private double pontuacaoDistribuicaoTrabalho;
     private double pontuacaoDistribuicaoTemporal;
-    private double pontuacaoQualidadeTecnica;
+    private Double pontuacaoQualidadeTecnica;
     private char conceito;
     private String resumo;
     private List<String> pontosPositivos;
@@ -67,7 +67,7 @@ public class FeedbackAnalise {
     public double getPontuacaoDistribuicaoTemporal() {
         return pontuacaoDistribuicaoTemporal;
     }
-    public double getPontuacaoQualidadeTecnica() {
+    public Double getPontuacaoQualidadeTecnica() {
         return pontuacaoQualidadeTecnica;
     }
     public char getConceito() {
@@ -130,7 +130,7 @@ public class FeedbackAnalise {
     public void setPontuacaoDistribuicaoTemporal(double pontuacaoDistribuicaoTemporal) {
         this.pontuacaoDistribuicaoTemporal = pontuacaoDistribuicaoTemporal;
     }
-    public void setPontuacaoQualidadeTecnica(double pontuacaoQualidadeTecnica) {
+    public void setPontuacaoQualidadeTecnica(Double pontuacaoQualidadeTecnica) {
         this.pontuacaoQualidadeTecnica = pontuacaoQualidadeTecnica;
     }
     public void setConceito(char conceito) {

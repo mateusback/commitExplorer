@@ -1,8 +1,10 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.controller;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.queries.ObterInformacoesAnaliseQuery;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterInformacoesAnaliseView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.solicitacaoAnalise.commandHandlers.ReenviarSolicitacaoCommand;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.solicitacaoAnalise.queries.ObterSolicitacoesAnaliseQuery;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.solicitacaoAnalise.views.ObterSolicitacoesAnaliseView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.BaseResponse;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.ResponseBuilder;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
@@ -26,14 +28,14 @@ public class AnaliseController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BaseResponse<Object>> fetchInfosAnalises(@PathVariable("id") Long id) {
+    public ResponseEntity<BaseResponse<ObterInformacoesAnaliseView>> fetchInfosAnalises(@PathVariable("id") Long id) {
         var query = new ObterInformacoesAnaliseQuery(id);
         var view = mediatorHandler.enviarConsulta(query);
         return ResponseEntity.ok(ResponseBuilder.success(view, "Informações da análise obtidas com sucesso"));
     }
 
     @GetMapping(value = "/solicitacoes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BaseResponse<Object>> fetchStatusSolicitacoes(@AuthenticationPrincipal UserDetails me) {
+    public ResponseEntity<BaseResponse<ObterSolicitacoesAnaliseView>> fetchStatusSolicitacoes(@AuthenticationPrincipal UserDetails me) {
         var query = new ObterSolicitacoesAnaliseQuery(me.getUsername());
         var view = mediatorHandler.enviarConsulta(query);
         return ResponseEntity.ok(ResponseBuilder.success(view, "Status das solicitações obtido com sucesso"));

@@ -4,6 +4,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.FeedbackDto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.IndicadoresAnalise;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.*;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.enums.TipoFeedback;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseProjetoRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.FeedbackAnaliseRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.IndicadoresFeedbackRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class FeedbackAnaliseServiceImpl implements FeedbackAnaliseService {
 
     private final IndicadoresAnaliseService indicadoresService;
+    private final AnaliseProjetoRepository analiseRepo;
     private final PontuacaoAnaliseService pontuacaoService;
     private final FeedbackAnaliseRepository feedbackRepo;
     private final IndicadoresFeedbackRepository indicadoresFeedbackRepo;
@@ -36,6 +38,8 @@ public class FeedbackAnaliseServiceImpl implements FeedbackAnaliseService {
         var indBasicos = indicadoresService.calcular(commits, inicio, fim, temCommitsAnalisados);
         var fbGeral = pontuacaoService.gerarFeedbackAcademico(commits, inicio, fim, indBasicos);
         salvarFeedback(analise, null, TipoFeedback.GERAL, inicio, fim, fbGeral, indBasicos);
+        analise.setPontuacaoTotal(fbGeral.getPontuacaoGeral());
+        analiseRepo.save(analise);
 
         Map<Long, List<Commit>> porAutor = commits.stream()
                 .filter(c -> c.getAutor() != null && c.getAutor().getIdAutor() != null)

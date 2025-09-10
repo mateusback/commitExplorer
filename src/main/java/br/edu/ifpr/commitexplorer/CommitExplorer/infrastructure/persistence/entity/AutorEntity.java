@@ -16,6 +16,8 @@ public class AutorEntity {
     private Long idAutor;
 
     private String nome;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "autor")

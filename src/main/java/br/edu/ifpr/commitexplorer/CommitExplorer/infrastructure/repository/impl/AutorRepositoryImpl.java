@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AutorRe
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.AutorEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AutorMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.AutorJpaRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,5 +35,23 @@ public class AutorRepositoryImpl implements AutorRepository {
         AutorEntity entity = autorMapper.toEntity(autor);
         AutorEntity saved = autorJpaRepository.save(entity);
         return autorMapper.toDomain(saved);
+    }
+
+    @Override
+    public Autor buscarOuCriarPorEmail(String nome, String email) {
+        AutorEntity entity = autorJpaRepository.findByEmail(email).orElse(null);
+        if (entity != null) {
+            return autorMapper.toDomain(entity);
+        }
+        try {
+            AutorEntity novoAutor = new AutorEntity();
+            novoAutor.setNome(nome);
+            novoAutor.setEmail(email);
+            AutorEntity salvo = autorJpaRepository.save(novoAutor);
+            return autorMapper.toDomain(salvo);
+        } catch (DataIntegrityViolationException e) {
+            AutorEntity existente = autorJpaRepository.findByEmail(email).orElse(null);
+            return existente != null ? autorMapper.toDomain(existente) : null;
+        }
     }
 }
