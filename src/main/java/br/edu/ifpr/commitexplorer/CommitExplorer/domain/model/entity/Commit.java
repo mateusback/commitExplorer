@@ -18,6 +18,7 @@ public class Commit {
     private Autor autor;
     private List<ArquivoAlterado> arquivosAlterados;
     private boolean ehMerge;
+    private boolean analisado;
 
     public void adicionarInformacoes(String mensagem, String hash, LocalDateTime commitDate, Integer complexidadeGeral) {
         this.mensagem = mensagem;
@@ -49,7 +50,7 @@ public class Commit {
     }
 
     public void calcularPontuacaoFinal() {
-        if (this.arquivosAlterados == null || this.arquivosAlterados.isEmpty()) {
+        if (this.arquivosAlterados == null || this.arquivosAlterados.isEmpty() || this.ehMerge || !this.analisado) {
             this.pontuacao = 10.0f;
             return;
         }
@@ -109,6 +110,9 @@ public class Commit {
     public TipoCommit getTipo() {
         return tipo;
     }
+    public boolean isAnalisado() {
+        return analisado;
+    }
     // </editor-fold>
 
     // <editor-fold desc="Setters">
@@ -141,6 +145,9 @@ public class Commit {
     }
     public void setTipo(TipoCommit tipo) {
         this.tipo = tipo;
+    }
+    public void setAnalisado(boolean analisado) {
+        this.analisado = analisado;
     }
     // </editor-fold>
 }

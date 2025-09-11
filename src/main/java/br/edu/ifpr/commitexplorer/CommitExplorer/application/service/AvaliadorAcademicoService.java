@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -127,9 +128,9 @@ public class AvaliadorAcademicoService {
         
         double somaAcumulada = 0;
         double areaGini = 0;
-        
-        for (int i = 0; i < listaOrdenada.size(); i++) {
-            somaAcumulada += listaOrdenada.get(i);
+
+        for (Long aLong : listaOrdenada) {
+            somaAcumulada += aLong;
             areaGini += somaAcumulada;
         }
         
@@ -192,14 +193,14 @@ public class AvaliadorAcademicoService {
         indicadores.setDiversidadeTipos(entropia);
     }
 
-    private double calcularEntropia(java.util.Collection<Long> frequencias, long total) {
+    private double calcularEntropia(Collection<Long> frequencias, long total) {
         if (total == 0) return 0.0;
         
         return frequencias.stream()
             .mapToDouble(freq -> {
                 if (freq == 0) return 0.0;
                 double p = freq / (double) total;
-                return -p * Math.log(p) / Math.log(2); // Entropia em bits
+                return -p * Math.log(p) / Math.log(2);
             })
             .sum();
     }

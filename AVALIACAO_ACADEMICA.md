@@ -47,7 +47,7 @@ O sistema foi refatorado para incluir uma avaliação mais abrangente e focada e
 - **Equilíbrio**: Todos os membros contribuem de forma significativa
 
 ### 5. Distribuição Temporal (10% da nota)
-- **Horários de trabalho**: Preferência por horário comercial
+- **Horários de trabalho**: Preferência por horário de aula
 - **Concentração horária**: Evita trabalho apenas em horários extremos
 - **Organização**: Demonstra disciplina e planejamento
 

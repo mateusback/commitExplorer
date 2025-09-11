@@ -1,8 +1,6 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper;
 
-import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Branch;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;
-import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.BranchEntity;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.entity.CommitEntity;
 
 import java.util.List;

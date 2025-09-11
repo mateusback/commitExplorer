@@ -5,6 +5,8 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.querie
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterAnalisesProjetoView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterAnalisesView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.ObterProjetosView;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.BaseResponse;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.ResponseBuilder;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,20 +42,23 @@ public class ProjectController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ObterProjetosView> getProjects(@AuthenticationPrincipal UserDetails me) {
+    public ResponseEntity<BaseResponse<ObterProjetosView>> getProjects(@AuthenticationPrincipal UserDetails me) {
         var view = mediatorHandler.enviarConsulta(new ObterProjetosQuery(me.getUsername()));
-        return ResponseEntity.ok(view);
+        return ResponseEntity.ok(ResponseBuilder
+                .success(view, "Projetos obtidos com sucesso"));
     }
 
     @GetMapping(value = "/analysis/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ObterAnalisesProjetoView> getProjectAnalysis(@PathVariable("id") String projectId) {
+    public ResponseEntity<BaseResponse<ObterAnalisesProjetoView>> getProjectAnalysis(@PathVariable("id") String projectId) {
         if (projectId == null || projectId.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(ResponseBuilder
+                    .error("ID do projeto é obrigatório"));
         }
 
         var id = Long.parseLong(projectId);
         var view = mediatorHandler.enviarConsulta(new ObterAnalisesProjetoQuery(id));
-        return ResponseEntity.ok(view);
+        return ResponseEntity.ok(ResponseBuilder
+                .success(view, "Análises do projeto obtidas com sucesso"));
     }
 
 }

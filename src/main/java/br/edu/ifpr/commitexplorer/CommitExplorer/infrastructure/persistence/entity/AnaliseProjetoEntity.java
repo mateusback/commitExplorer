@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,4 +41,7 @@ public class AnaliseProjetoEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private User usuario;
+
+    @OneToMany(mappedBy = "analise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedbackAnaliseEntity> feedbacks;
 }

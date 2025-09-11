@@ -16,6 +16,7 @@ public class RepositorioEntity {
     private Long idRepositorio;
     private String nome;
     private String urlRepo;
+    private boolean analisado;
 
     @ManyToOne
     @JoinColumn(name = "id_projeto", nullable = false)

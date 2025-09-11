@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class SolicitacaoView {
     public SolicitacaoView(SolicitacaoAnalise sa) {
+        id = sa.getIdSolicitacaoAnalise();
         nomeProjeto = sa.getNomeProjeto();
         dataSolicitacao = sa.getDataSolicitacao();
         dataInicio = sa.getDataInicio();
@@ -21,6 +22,7 @@ public class SolicitacaoView {
         mensagemErro = sa.getMensagemErro();
     }
 
+    private long id;
     private String nomeProjeto;
     private LocalDateTime dataSolicitacao = LocalDateTime.now();
     private LocalDate dataInicio;

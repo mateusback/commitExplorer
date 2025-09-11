@@ -2,6 +2,8 @@ package br.edu.ifpr.commitexplorer.CommitExplorer.presentation.controller;
 
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.commit.queries.ObterInformacoesCommitQuery;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.commit.views.InformacoesCommitView;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.BaseResponse;
+import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.ResponseBuilder;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,9 +36,9 @@ public class CommitController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<InformacoesCommitView> fetchComitInfo(@PathVariable("id") Long id) {
+    public ResponseEntity<BaseResponse<InformacoesCommitView>> fetchComitInfo(@PathVariable("id") Long id) {
         var command = new ObterInformacoesCommitQuery(id);
         var view = mediatorHandler.enviarConsulta(command);
-        return ResponseEntity.ok(view);
+        return ResponseEntity.ok(ResponseBuilder.success(view, "Informações do commit obtidas com sucesso"));
     }
 }

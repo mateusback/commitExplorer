@@ -57,6 +57,13 @@ public class SolicitacaoAnalise {
         this.mensagemErro = erro;
     }
 
+    public void redefinirParaPendente() {
+        this.status = StatusSolicitacao.PENDENTE;
+        this.mensagemErro = null;
+        this.dataInicioAnalise = null;
+        this.dataFimAnalise = null;
+    }
+
     // <editor-fold desc="Getters">
     public Long getIdSolicitacaoAnalise() {
         return idSolicitacaoAnalise;
