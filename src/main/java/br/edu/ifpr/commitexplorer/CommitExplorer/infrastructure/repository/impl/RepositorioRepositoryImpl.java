@@ -25,4 +25,14 @@ public class RepositorioRepositoryImpl implements RepositorioRepository {
         RepositorioEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
     }
+
+    @Override
+    @Transactional
+    public Repositorio findById(Long id) {
+        RepositorioEntity entity = jpaRepository.findById(id).orElse(null);
+        if (entity == null) {
+            return null;
+        }
+        return mapper.toDomain(entity);
+    }
 }

@@ -34,7 +34,7 @@ public class GeralAnaliseView {
         this.id = analise.getIdAnaliseProjeto();
         this.dataAnalise = DateUtils.formatOrNull(analise.getDataAnalise());
         this.nomeProjeto = analise.getProjeto().getNome();
-        this.urlRepositorio = analise.getProjeto().getProjetoUrl();
+        this.urlRepositorio = analise.getBranch().getRepositorio().getUrlRepo();
         this.branch = analise.getBranch().getNome();
         this.dataInicio = DateUtils.formatOrNull(analise.getSolicitacaoAnalise().getDataInicio());
         this.dataFim = DateUtils.formatOrNull(analise.getSolicitacaoAnalise().getDataFim());
