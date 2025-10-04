@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.Analise
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.AnaliseProjetoJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     }
 
     @Override
+    @Transactional
     public AnaliseProjeto findById(Long id) {
         return analiseProjetoJpaRepository.findById(id)
                 .map(analiseProjetoMapper::toDomain)
@@ -34,6 +36,7 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     }
 
     @Override
+    @Transactional
     public List<AnaliseProjeto> findAll() {
         return analiseProjetoJpaRepository.findAll()
                 .stream()
@@ -42,6 +45,7 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     }
 
     @Override
+    @Transactional
     public List<AnaliseProjeto> findByProjetoId(Long projetoId) {
         return analiseProjetoJpaRepository.findByProjeto_IdProjeto(projetoId)
                 .stream()

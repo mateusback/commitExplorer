@@ -7,6 +7,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.AutorJpaRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AutorRepositoryImpl implements AutorRepository {
@@ -38,6 +39,7 @@ public class AutorRepositoryImpl implements AutorRepository {
     }
 
     @Override
+    @Transactional
     public Autor buscarOuCriarPorEmail(String nome, String email) {
         AutorEntity entity = autorJpaRepository.findByEmail(email).orElse(null);
         if (entity != null) {

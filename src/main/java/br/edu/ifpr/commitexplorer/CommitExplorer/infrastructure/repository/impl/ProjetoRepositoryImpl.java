@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.enti
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.ProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.ProjetoJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
+    @Transactional
     public Projeto save(Projeto repositorio) {
         ProjetoEntity entity = mapper.toEntity(repositorio);
         ProjetoEntity saved = jpaRepository.save(entity);
@@ -27,6 +29,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
+    @Transactional
     public List<Projeto> findAll() {
         return jpaRepository.findAll().stream()
                 .map(mapper::toDomain)
@@ -34,6 +37,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
+    @Transactional
     public Projeto findById(Long id) {
         return jpaRepository.findById(id)
                 .map(mapper::toDomain)
@@ -41,6 +45,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
+    @Transactional
     public List<Projeto> findAllByOwnerId(Long ownerId) {
         return jpaRepository.findAllByUsuario_Id(ownerId)
                 .stream().map(mapper::toDomain).toList();

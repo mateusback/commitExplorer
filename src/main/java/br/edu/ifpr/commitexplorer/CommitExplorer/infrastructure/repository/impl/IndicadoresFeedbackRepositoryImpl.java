@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.Indicad
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.IndicadoresFeedbackMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.IndicadoresFeedbackJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class IndicadoresFeedbackRepositoryImpl implements IndicadoresFeedbackRepository {
@@ -18,6 +19,8 @@ public class IndicadoresFeedbackRepositoryImpl implements IndicadoresFeedbackRep
         this.mapper = mapper;
     }
 
+    @Override
+    @Transactional
     public IndicadoresFeedback save(IndicadoresFeedback indicadoresFeedback) {
         var entity = mapper.toEntity(indicadoresFeedback);
         return mapper.toDomain(jpaRepository.save(entity));

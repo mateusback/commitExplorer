@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
     private final FeedbackAnaliseService feedbackAnaliseService;
 
     @Async
-    @Transactional
     public void processar(ProcessarSolicitacaoCommand command) {
         var diretorio = (java.io.File) null;
         var horarioInicio = LocalDateTime.now();
@@ -58,9 +56,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
 
             log.info("Diretório clonado: {}", diretorio);
 
-            var projeto = new Projeto(solicitacao.getNomeProjeto(), solicitacao.getProjetoUrl());
-            projeto.setUsuario(solicitacao.getUsuario());
-            var projetoSalvo = projetoRepository.save(projeto);
+            var projetoSalvo = projetoRepository.findById(command.getProjetoId());
 
             var repositorio = new Repositorio("Repositorio de Análise", solicitacao.getRepositorioUrl(), projetoSalvo);
             var repositorioSalvo = repositorioRepository.save(repositorio);
@@ -164,7 +160,7 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
         }
     }
 
-    private Autor obterAutor(Commit commit) {
+    protected Autor obterAutor(Commit commit) {
         return autorRepository.buscarOuCriarPorEmail(commit.getAutor().getNome(), commit.getAutor().getEmail());
     }
 }

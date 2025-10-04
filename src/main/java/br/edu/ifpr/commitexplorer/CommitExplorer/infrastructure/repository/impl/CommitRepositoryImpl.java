@@ -8,6 +8,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.BranchJpaRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.CommitJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class CommitRepositoryImpl implements CommitRepository {
@@ -21,23 +22,27 @@ public class CommitRepositoryImpl implements CommitRepository {
     }
 
     @Override
+    @Transactional
     public boolean existsByHashAndRepo(String hash, String repoUrl) {
         return jpaRepository.existsByHashAndBranch_Repositorio_UrlRepo(hash, repoUrl);
     }
 
     @Override
+    @Transactional
     public Commit save(Commit commit) {
         CommitEntity entity = mapper.toEntity(commit);
         return mapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override
+    @Transactional
     public Commit update(Commit commit) {
         CommitEntity entity = mapper.toEntity(commit);
         return mapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override
+    @Transactional
     public Commit findByHashAndRepo(String hash, String repoUrl) {
         CommitEntity entity = jpaRepository.findByHashAndBranch_Repositorio_UrlRepo(hash, repoUrl);
         if (entity == null) {
@@ -47,6 +52,7 @@ public class CommitRepositoryImpl implements CommitRepository {
     }
 
     @Override
+    @Transactional
     public Commit obterInformacoesCommit(Long idCommit) {
         CommitEntity entity = jpaRepository.findById(idCommit)
                 .orElseThrow(() -> new IllegalArgumentException("Commit não encontrado"));

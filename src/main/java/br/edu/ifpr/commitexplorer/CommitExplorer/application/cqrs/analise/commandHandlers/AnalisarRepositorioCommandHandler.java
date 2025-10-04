@@ -6,15 +6,15 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.service.SolicitacaoAnaliseExecutor;
 import br.edu.ifpr.commitexplorer.CommitExplorer.authentication.repository.UserRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.CommandHandler;
-import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.mediator.MediatorHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.security.EncryptionService;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Projeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.SolicitacaoAnalise;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.ProjetoRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.SolicitacaoAnaliseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -24,17 +24,20 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
     private final SolicitacaoAnaliseRepository solicitacaoAnaliseRepository;
     private final SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor;
     private final UserRepository userRepository;
+    private final ProjetoRepository projetoRepository;
 
     public AnalisarRepositorioCommandHandler(
             EncryptionService encryptionService,
             SolicitacaoAnaliseRepository solicitacaoAnaliseRepository,
             SolicitacaoAnaliseExecutor solicitacaoAnaliseExecutor,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ProjetoRepository projetoRepository
     ) {
         this.encryptionService = encryptionService;
         this.solicitacaoAnaliseRepository = solicitacaoAnaliseRepository;
         this.solicitacaoAnaliseExecutor = solicitacaoAnaliseExecutor;
         this.userRepository = userRepository;
+        this.projetoRepository = projetoRepository;
     }
 
     @Override
@@ -46,6 +49,11 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
             log.error("Usuário com email {} não encontrado", command.getRequestedByEmail());
             return new IllegalArgumentException("Usuário não encontrado");
         });
+
+        var projeto = new Projeto(command.getProjectName(), command.getProjectUrl());
+        projeto.definirUsuario(usuario);
+
+        var projetoSalvo = projetoRepository.save(projeto);
 
         for (var repositorio : command.getRepositorios()) {
             repositoriosParaAnalisar++;
@@ -65,7 +73,7 @@ public class AnalisarRepositorioCommandHandler implements CommandHandler<Analisa
             solicitacao.setNomeProjeto(command.getProjectName());
             solicitacao.setUsuario(usuario);
             var entity = solicitacaoAnaliseRepository.save(solicitacao);
-            var processarCommand = new ProcessarSolicitacaoCommand(entity.getIdSolicitacaoAnalise());
+            var processarCommand = new ProcessarSolicitacaoCommand(entity.getIdSolicitacaoAnalise(), projetoSalvo.getIdProjeto());
             log.info("Enviando comando para processar solicitação de análise: {}", entity.getIdSolicitacaoAnalise());
             solicitacaoAnaliseExecutor.processar(processarCommand);
         }

@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.Feedbac
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.FeedbackAnaliseMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.FeedbackAnaliseJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,12 +21,15 @@ public class FeedbackAnaliseRepositoryImpl implements FeedbackAnaliseRepository 
         this.mapper = mapper;
     }
 
+    @Override
+    @Transactional
     public FeedbackAnalise save(FeedbackAnalise feedbackAnalise) {
         var entity = mapper.toEntity(feedbackAnalise);
         return mapper.toDomain(jpaRepository.save(entity));
     }
 
     @Override
+    @Transactional
     public List<FeedbackAnalise> obterPorIdAnalise(Long analiseId) {
         var entities = jpaRepository.findByAnalise_IdAnaliseProjeto(analiseId);
         return mapper.toDomain(entities);
