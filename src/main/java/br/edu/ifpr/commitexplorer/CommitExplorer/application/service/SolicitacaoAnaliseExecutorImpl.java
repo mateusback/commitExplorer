@@ -75,9 +75,27 @@ public class SolicitacaoAnaliseExecutorImpl implements SolicitacaoAnaliseExecuto
             var novosCommits = new ArrayList<Commit>();
             for (var commitExtraido : commitsExtraidos) {
 
-                if (commitRepository.existsByHashAndRepo(commitExtraido.getHash(), solicitacao.getRepositorioUrl())) {
+                var existente = commitRepository.findByHashAndRepo(commitExtraido.getHash(), solicitacao.getRepositorioUrl());
+                if (existente != null) {
+                    var existenteCompleto = commitRepository.obterInformacoesCommit(existente.getIdCommit());
+                    if (existenteCompleto != null) {
+                        existenteCompleto.atribuirBranch(branch);
+
+                        if (existenteCompleto.getArquivosAlterados() != null) {
+                            existenteCompleto.getArquivosAlterados()
+                                    .forEach(arquivo -> arquivo.atribuirCommit(existenteCompleto));
+                        }
+
+                        existenteCompleto.calcularPontuacaoFinal();
+                        commitRepository.update(existenteCompleto);
+                        novosCommits.add(existenteCompleto);
+                        branch.adicionarCommit(existenteCompleto);
+                    } else {
+                        existente.atribuirBranch(branch);
+                        branch.adicionarCommit(existente);
+                        novosCommits.add(existente);
+                    }
                     continue;
-                    //TODO - Colocar lógica aqui para chamar o commit nessa analise
                 }
 
                 var commitTemp = new Commit();
