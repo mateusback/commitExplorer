@@ -29,4 +29,7 @@ public class ProjetoEntity {
 
     @OneToMany(mappedBy = "projeto")
     private List<RepositorioEntity> repositorios;
+
+    @Column(nullable = false)
+    private boolean deletado = false;
 }
