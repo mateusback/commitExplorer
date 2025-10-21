@@ -20,6 +20,8 @@ public class SolicitacaoAnaliseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSolicitacaoAnalise;
 
+    private Long idProjeto;
+
     private LocalDate dataInicio;
     private LocalDate dataFim;
     private LocalDateTime dataInicioAnalise;

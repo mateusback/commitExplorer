@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.enti
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.RepositorioMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.RepositorioJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class RepositorioRepositoryImpl implements RepositorioRepository {
@@ -16,10 +17,22 @@ public class RepositorioRepositoryImpl implements RepositorioRepository {
         this.jpaRepository = jpaRepository;
         this.mapper = mapper;
     }
+
     @Override
+    @Transactional
     public Repositorio save(Repositorio repositorio) {
         RepositorioEntity entity = mapper.toEntity(repositorio);
         RepositorioEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
+    }
+
+    @Override
+    @Transactional
+    public Repositorio findById(Long id) {
+        RepositorioEntity entity = jpaRepository.findById(id).orElse(null);
+        if (entity == null) {
+            return null;
+        }
+        return mapper.toDomain(entity);
     }
 }

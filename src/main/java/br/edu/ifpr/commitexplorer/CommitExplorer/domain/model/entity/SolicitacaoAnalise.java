@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class SolicitacaoAnalise {
 
     private Long idSolicitacaoAnalise;
+    private Long idProjeto;
     private String nomeProjeto;
     private LocalDateTime dataSolicitacao = LocalDateTime.now();
     private LocalDate dataInicio;
@@ -69,6 +70,8 @@ public class SolicitacaoAnalise {
         return idSolicitacaoAnalise;
     }
 
+    public Long getIdProjeto() {return idProjeto;}
+
     public LocalDateTime getDataSolicitacao() {
         return dataSolicitacao;
     }
@@ -125,6 +128,7 @@ public class SolicitacaoAnalise {
     public void setIdSolicitacaoAnalise(Long idSolicitacaoAnalise) {
         this.idSolicitacaoAnalise = idSolicitacaoAnalise;
     }
+    public void setIdProjeto(Long idProjeto) {this.idProjeto = idProjeto;}
     public void setDataSolicitacao(LocalDateTime dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
     }

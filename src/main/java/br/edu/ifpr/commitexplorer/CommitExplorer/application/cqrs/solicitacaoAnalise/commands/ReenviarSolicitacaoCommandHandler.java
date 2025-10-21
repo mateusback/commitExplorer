@@ -31,7 +31,7 @@ public class ReenviarSolicitacaoCommandHandler implements CommandHandler<Reenvia
         solicitacao.redefinirParaPendente();
         solicitacaoAnaliseRepository.save(solicitacao);
 
-        var comando = new ProcessarSolicitacaoCommand(solicitacao.getIdSolicitacaoAnalise());
+        var comando = new ProcessarSolicitacaoCommand(solicitacao.getIdSolicitacaoAnalise(), solicitacao.getIdProjeto());
 
         solicitacaoAnaliseExecutor.processar(comando);
 

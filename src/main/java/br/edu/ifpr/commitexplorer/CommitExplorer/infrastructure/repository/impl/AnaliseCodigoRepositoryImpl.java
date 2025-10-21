@@ -6,6 +6,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.enti
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseCodigoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.AnaliseCodigoJpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class AnaliseCodigoRepositoryImpl implements AnaliseCodigoRepository {
     }
 
     @Override
+    @Transactional
     public List<AnaliseCodigo> saveAll(List<AnaliseCodigo> analises) {
         List<AnaliseCodigoEntity> entities = analises.stream()
                 .map(mapper::toEntity)
@@ -38,6 +40,7 @@ public class AnaliseCodigoRepositoryImpl implements AnaliseCodigoRepository {
     }
 
     @Override
+    @Transactional
     public AnaliseCodigo save(AnaliseCodigo analiseCodigo) {
         AnaliseCodigoEntity entity = mapper.toEntity(analiseCodigo);
         AnaliseCodigoEntity savedEntity = jpaRepository.save(entity);

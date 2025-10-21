@@ -7,6 +7,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.enti
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.SolicitacaoAnaliseMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.SolicitacaoAnaliseJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
     }
 
     @Override
+    @Transactional
     public SolicitacaoAnalise save(SolicitacaoAnalise solicitacaoAnalise) {
         SolicitacaoAnaliseEntity entity = mapper.toEntity(solicitacaoAnalise);
         SolicitacaoAnaliseEntity saved = jpaRepository.save(entity);
@@ -33,6 +35,7 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
     }
 
     @Override
+    @Transactional
     public SolicitacaoAnalise findById(Long idSolicitacaoAnalise) {
         return jpaRepository.findById(idSolicitacaoAnalise)
                 .map(mapper::toDomain)
@@ -40,6 +43,7 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
     }
 
     @Override
+    @Transactional
     public boolean existsRecentByRepositorioUrlAndBranch(String repositorioUrl, String branch, LocalDateTime threshold) {
         return jpaRepository.existsByRepositorioUrlAndBranchAndDataSolicitacaoAfter(
                 repositorioUrl, branch, threshold
@@ -47,6 +51,7 @@ public class SolicitacaoAnaliseRepositoryImpl implements SolicitacaoAnaliseRepos
     }
 
     @Override
+    @Transactional
     public List<SolicitacaoAnalise> obterSolicitacoesAnalisePorSolicitante(long userId) {
         return jpaRepository.findByUsuarioId(userId).stream()
                 .map(mapper::toDomain)

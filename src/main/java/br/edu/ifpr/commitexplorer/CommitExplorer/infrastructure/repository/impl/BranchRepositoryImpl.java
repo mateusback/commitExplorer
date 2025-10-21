@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.BranchR
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.BranchMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.BranchJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class BranchRepositoryImpl implements BranchRepository {
@@ -17,6 +18,7 @@ public class BranchRepositoryImpl implements BranchRepository {
     }
 
     @Override
+    @Transactional
     public Branch save(Branch branch) {
         var entity = autorMapper.toEntity(branch);
         var saved = autorJpaRepository.save(entity);
@@ -24,6 +26,7 @@ public class BranchRepositoryImpl implements BranchRepository {
     }
 
     @Override
+    @Transactional
     public Branch findById(long id) {
         var optionalEntity = autorJpaRepository.findByIdBranch(id);
         var entity = optionalEntity.orElseThrow(() -> new RuntimeException("Branch not found with id: " + id));

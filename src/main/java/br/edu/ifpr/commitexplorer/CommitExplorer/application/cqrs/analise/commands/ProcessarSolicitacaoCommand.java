@@ -7,8 +7,11 @@ import lombok.Getter;
 @Getter
 public class ProcessarSolicitacaoCommand implements Command<ProcessarSolicitacaoView> {
     private final long solicitacaoId;
+    private final long projetoId;
 
-    public ProcessarSolicitacaoCommand(long solicitacaoId) {
+
+    public ProcessarSolicitacaoCommand(long solicitacaoId, long projetoId) {
         this.solicitacaoId = solicitacaoId;
+        this.projetoId = projetoId;
     }
 }

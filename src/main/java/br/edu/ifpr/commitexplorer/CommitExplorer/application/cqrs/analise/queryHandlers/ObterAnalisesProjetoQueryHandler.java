@@ -9,6 +9,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.crosscutting.cqrs.QueryHandler;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.AnaliseProjeto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.AnaliseProjetoRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.BranchRepository;
+import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.RepositorioRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +59,8 @@ public class ObterAnalisesProjetoQueryHandler implements QueryHandler<ObterAnali
             somaPontuacoes += pontuacao;
             somaComplexidade += complexidade;
 
-            var branch = analise.getBranch();
+            var branch = branchRepository.findById(analise.getBranch().getIdBranch());
+            analise.setBranch(branch);
             if (branch != null) branches.add(branch.getNome());
 
             resumoList.add(montarResumoAnalise(analise));
@@ -81,12 +83,13 @@ public class ObterAnalisesProjetoQueryHandler implements QueryHandler<ObterAnali
         var resumo = new ResumoAnaliseView();
         var branch = analise.getBranch();
         var solicitacao = analise.getSolicitacaoAnalise();
+        var repositorioUrl = branch != null ? branch.getRepositorio().getUrlRepo() : null;
 
         resumo.setDataAnalise(analise.getDataAnalise());
         resumo.setDataInicio(solicitacao.getDataInicioAnalise().toString());
         resumo.setDataFim(solicitacao.getDataFim().toString());
         resumo.setNomeBranch(branch != null ? branch.getNome() : null);
-        resumo.setUrlRepo(branch != null && branch.getRepositorio() != null ? branch.getRepositorio().getUrlRepo() : null);
+        resumo.setUrlRepo(repositorioUrl);
         resumo.setTotalCommits(defaultInt(analise.getTotalCommits()));
         resumo.setTotalAutores(defaultInt(analise.getTotalAutores()));
         resumo.setQuantidadeCodeSmells(defaultInt(analise.getQuantidadeCodeSmells()));

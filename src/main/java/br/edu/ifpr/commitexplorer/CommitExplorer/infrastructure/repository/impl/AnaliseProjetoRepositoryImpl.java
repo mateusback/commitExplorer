@@ -5,6 +5,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.interfaces.Analise
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapper.AnaliseProjetoMapper;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.AnaliseProjetoJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,25 +28,37 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     }
 
     @Override
+    @Transactional
     public AnaliseProjeto findById(Long id) {
-        return analiseProjetoJpaRepository.findById(id)
+        return analiseProjetoJpaRepository.findByIdAnaliseProjetoAndDeletadoFalse(id)
                 .map(analiseProjetoMapper::toDomain)
                 .orElse(null);
     }
 
     @Override
+    @Transactional
     public List<AnaliseProjeto> findAll() {
-        return analiseProjetoJpaRepository.findAll()
+        return analiseProjetoJpaRepository.findAllByDeletadoFalse()
                 .stream()
                 .map(analiseProjetoMapper::toDomain)
                 .toList();
     }
 
     @Override
+    @Transactional
     public List<AnaliseProjeto> findByProjetoId(Long projetoId) {
-        return analiseProjetoJpaRepository.findByProjeto_IdProjeto(projetoId)
+        return analiseProjetoJpaRepository.findByProjeto_IdProjetoAndDeletadoFalse(projetoId)
                 .stream()
                 .map(analiseProjetoMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void softDelete(Long id) {
+        analiseProjetoJpaRepository.findById(id).ifPresent(entity -> {
+            entity.setDeletado(true);
+            analiseProjetoJpaRepository.save(entity);
+        });
     }
 }

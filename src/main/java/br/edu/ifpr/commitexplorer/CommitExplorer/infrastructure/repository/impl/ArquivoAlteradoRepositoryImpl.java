@@ -11,6 +11,7 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.persistence.mapp
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.AnaliseCodigoJpaRepository;
 import br.edu.ifpr.commitexplorer.CommitExplorer.infrastructure.repository.interfaces.ArquivoAlteradoJpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class ArquivoAlteradoRepositoryImpl implements ArquivoAlteradoRepository 
     }
 
     @Override
+    @Transactional
     public List<ArquivoAlterado> saveAll(List<ArquivoAlterado> arquivos) {
         List<ArquivoAlteradoEntity> entities = arquivos.stream()
                 .map(mapper::toEntity)

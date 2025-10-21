@@ -11,6 +11,7 @@ public class SolicitacaoAnaliseMapperImpl implements SolicitacaoAnaliseMapper {
     public SolicitacaoAnaliseEntity toEntity(SolicitacaoAnalise domain) {
         var entity = new SolicitacaoAnaliseEntity();
         entity.setIdSolicitacaoAnalise(domain.getIdSolicitacaoAnalise());
+        entity.setIdProjeto(domain.getIdProjeto());
         entity.setDataSolicitacao(domain.getDataSolicitacao());
         entity.setDataFim(domain.getDataFim());
         entity.setDataInicio(domain.getDataInicio());
@@ -36,6 +37,7 @@ public class SolicitacaoAnaliseMapperImpl implements SolicitacaoAnaliseMapper {
 
         var solicitacaoAnalise = new SolicitacaoAnalise();
         solicitacaoAnalise.setIdSolicitacaoAnalise(entity.getIdSolicitacaoAnalise());
+        solicitacaoAnalise.setIdProjeto(entity.getIdProjeto());
         solicitacaoAnalise.setDataSolicitacao(entity.getDataSolicitacao());
         solicitacaoAnalise.setDataFim(entity.getDataFim());
         solicitacaoAnalise.setDataInicio(entity.getDataInicio());

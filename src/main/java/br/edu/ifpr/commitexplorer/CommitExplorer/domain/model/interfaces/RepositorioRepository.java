@@ -4,4 +4,5 @@ import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Repositorio
 
 public interface RepositorioRepository {
     Repositorio save(Repositorio repositorio);
+    Repositorio findById(Long id);
 }

@@ -37,6 +37,10 @@ public class Projeto {
         analise.setProjeto(this);
     }
 
+    public void definirUsuario(User usuario) {
+        this.usuario = usuario;
+    }
+
 
     // <editor-fold desc="Getters">
     public Long getIdProjeto() {

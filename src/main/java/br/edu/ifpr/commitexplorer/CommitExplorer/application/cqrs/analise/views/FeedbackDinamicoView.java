@@ -11,7 +11,7 @@ public class FeedbackDinamicoView{
     List<String> pontosNegativos;
     List<String> sugestoes;
     double pontuacaoGeral;
-    char conceito;
+    Character conceito; // alterado para permitir null quando necessário
     double pontuacaoFrequenciaConsistencia;
     double pontuacaoQualidadeMensagens;
     double pontuacaoVariedadeTipos;
