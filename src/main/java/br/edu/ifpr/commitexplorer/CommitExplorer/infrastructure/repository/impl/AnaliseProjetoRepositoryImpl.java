@@ -30,7 +30,7 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     @Override
     @Transactional
     public AnaliseProjeto findById(Long id) {
-        return analiseProjetoJpaRepository.findById(id)
+        return analiseProjetoJpaRepository.findByIdAnaliseProjetoAndDeletadoFalse(id)
                 .map(analiseProjetoMapper::toDomain)
                 .orElse(null);
     }
@@ -38,7 +38,7 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     @Override
     @Transactional
     public List<AnaliseProjeto> findAll() {
-        return analiseProjetoJpaRepository.findAll()
+        return analiseProjetoJpaRepository.findAllByDeletadoFalse()
                 .stream()
                 .map(analiseProjetoMapper::toDomain)
                 .toList();
@@ -47,9 +47,18 @@ public class AnaliseProjetoRepositoryImpl implements AnaliseProjetoRepository {
     @Override
     @Transactional
     public List<AnaliseProjeto> findByProjetoId(Long projetoId) {
-        return analiseProjetoJpaRepository.findByProjeto_IdProjeto(projetoId)
+        return analiseProjetoJpaRepository.findByProjeto_IdProjetoAndDeletadoFalse(projetoId)
                 .stream()
                 .map(analiseProjetoMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void softDelete(Long id) {
+        analiseProjetoJpaRepository.findById(id).ifPresent(entity -> {
+            entity.setDeletado(true);
+            analiseProjetoJpaRepository.save(entity);
+        });
     }
 }

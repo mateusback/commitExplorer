@@ -9,4 +9,5 @@ public interface AnaliseProjetoRepository {
     AnaliseProjeto findById(Long id);
     List<AnaliseProjeto> findAll();
     List<AnaliseProjeto> findByProjetoId(Long projetoId);
+    void softDelete(Long id);
 }

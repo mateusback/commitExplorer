@@ -44,4 +44,6 @@ public class AnaliseProjetoEntity {
 
     @OneToMany(mappedBy = "analise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedbackAnaliseEntity> feedbacks;
+    @Column(nullable = false)
+    private boolean deletado = false;
 }
