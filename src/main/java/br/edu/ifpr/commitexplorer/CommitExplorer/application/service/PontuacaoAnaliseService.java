@@ -1,8 +1,5 @@
 package br.edu.ifpr.commitexplorer.CommitExplorer.application.service;
 
-import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.AutorResumoView;
-import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.FeedbackDinamicoView;
-import br.edu.ifpr.commitexplorer.CommitExplorer.application.cqrs.analise.views.GeralAnaliseView;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.FeedbackDto;
 import br.edu.ifpr.commitexplorer.CommitExplorer.application.dtos.IndicadoresAnalise;
 import br.edu.ifpr.commitexplorer.CommitExplorer.domain.model.entity.Commit;

@@ -41,6 +41,7 @@ public class AnaliseController {
                 .anyMatch(a -> "PROFESSOR".equals(a.getAuthority()));
         if (!isProfessor && view != null && view.getFeedback() != null) {
             view.getFeedback().setConceito(null);
+            view.getAutores().forEach(autor -> autor.getFeedback().setConceito(null));
         }
 
         return ResponseEntity.ok(ResponseBuilder.success(view, "Informações da análise obtidas com sucesso"));
