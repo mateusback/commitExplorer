@@ -46,7 +46,7 @@ public class CommitRepositoryImpl implements CommitRepository {
     public Commit findByHashAndRepo(String hash, String repoUrl) {
         CommitEntity entity = jpaRepository.findByHashAndBranch_Repositorio_UrlRepo(hash, repoUrl);
         if (entity == null) {
-            throw new IllegalArgumentException("Commit não encontrado");
+            return null;
         }
         return mapper.toDomain(entity);
     }
